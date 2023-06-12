@@ -1,0 +1,1 @@
+export const customLog = arg => console.log('\n--------------------------\n\n', arg)
