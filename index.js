@@ -1,12 +1,18 @@
-/* ---------------------------------------- UTILS ---------------------------------------- */
+/* ---------------------------------------- IMPORTS -------------------------------------- */
+
+const fs = require('fs')
+
+/* ---------------------------------------- CONSTANTS ------------------------------------ */
+
+const PATH = 'productos.json'
 
 const SEPARATION = '\n--------------------------\n\n'
 
-const generateRandomStock = () => Math.round((Math.random() * 100) + 1)
+/* ---------------------------------------- UTILS ---------------------------------------- */
 
 const customLog = arg => console.log(SEPARATION, arg)
 
-/* ---------------------------------------- PRODUCT ---------------------------------------- */
+/* ---------------------------------------- PRODUCT -------------------------------------- */
 
 class Product {
 
@@ -27,27 +33,36 @@ class ProductManager {
 
     #id = 1
 
-    constructor() {
+    constructor(path) {
+        this.path = path
         this.products = []
     }
 
-    addProduct(
-        title,
-        description,
-        price,
-        thumbnail,
-        code,
-        stock
-    ) {
+    async getProducts() {
 
-        const product = new Product(
-            title,
-            description,
-            price,
-            thumbnail,
-            code,
-            stock
-        )
+        try {
+
+            const productsJson = await fs.promises.readFile(this.path, 'utf-8')
+
+            this.products = JSON.parse(productsJson)
+
+            this.#id = this.products.reduce((maxId, product) => Math.max(maxId, product.id), 1) + 1
+
+        } catch (error) {
+            this.products = []
+        }
+
+        return this.products
+
+    }
+
+    async saveProducts() {
+        await fs.promises.writeFile(this.path, JSON.stringify(this.products))
+    }
+
+    async addProduct(product) {
+
+        await this.getProducts()
 
         if (this.areEmptyValues(product)) throw new Error(`Los campos son obligatorios`)
 
@@ -55,27 +70,59 @@ class ProductManager {
 
         this.products.push({ id: this.#id, ...product })
 
+        await this.saveProducts()
+
         this.incrementId()
     }
 
-    getProducts() {
-        return this.products
+    async getProductById(id) {
+
+        await this.getProducts()
+
+        const productoEncontrado = this.products.find(product => product.id === id)
+
+        if (!productoEncontrado) throw new Error('Producto no encontrado')
+
+        return productoEncontrado
+
     }
 
-    getProductById(id) {
-        const productoEncontrado = this.products.find(product => product.id === id)
-        if (!productoEncontrado) throw new Error('Producto no encontrado')
-        return productoEncontrado
+    async updateProduct(productToUpdate) {
+
+        let products = await this.getProducts()
+
+        this.products = products.map(product => {
+
+            if (product.id === productToUpdate.id) product = { ...productToUpdate }
+
+            return product
+
+        })
+
+        await this.saveProducts()
+
+    }
+
+    async deleteProduct(id) {
+
+        await this.getProducts()
+
+        const objetoEncontrado = await this.getProductById(id)
+
+        this.products.splice(this.products.indexOf(objetoEncontrado), 1)
+
+        await this.saveProducts()
+
     }
 
     // -----------------------------
 
     isCodeRepeated(code) {
-        return !!this.products.find(product => product.code === code)
+        return this.products.some(product => product.code === code)
     }
 
     incrementId() {
-        this.#id++
+        this.id++
     }
 
     areEmptyValues(product) {
@@ -87,70 +134,95 @@ class ProductManager {
 
 /* ---------------------------------------- TEST ---------------------------------------- */
 
-// Se creará una instancia de la clase “ProductManager”
+const test = async () => {
 
-const productManager = new ProductManager()
+    try {
 
-customLog(productManager)
+        // Se creará una instancia de la clase “ProductManager”
 
-// Se llamará “getProducts” recién creada la instancia, debe devolver un arreglo vacío []
+        const productManager = new ProductManager(PATH)
 
-customLog(productManager.getProducts())
+        customLog(productManager)
 
-try {
+        // Se llamará “getProducts” recién creada la instancia, debe devolver un arreglo vacío []
 
-    /* Se llamará al método “addProduct” con los campos:
+        let getProducts = await productManager.getProducts()
+
+        customLog(getProducts)
+
+        /* Se llamará al método “addProduct” con los campos:
+        
+            title: “producto prueba”
+            description:”Este es un producto prueba”
+            price:200,
+            thumbnail:”Sin imagen”
+            code:”abc123”,
+            stock:25
     
-        title: “producto prueba”
-        description:”Este es un producto prueba”
-        price:200,
-        thumbnail:”Sin imagen”
-        code:”abc123”,
-        stock:25
-    */
+        */
 
-    // El objeto debe agregarse satisfactoriamente con un id generado automáticamente SIN REPETIRSE
+        // El objeto debe agregarse satisfactoriamente con un id generado automáticamente SIN REPETIRSE
 
-    productManager.addProduct(
-        'producto prueba',
-        'Este es un producto prueba',
-        200,
-        'Sin imagen',
-        'abc123',
-        25
-    )
+        await productManager.addProduct(
+            new Product(
+                'producto prueba',
+                'Este es un producto prueba',
+                200,
+                'Sin imagen',
+                'abc123',
+                25
+            )
+        )
 
-    // Se llamará el método “getProducts” nuevamente, esta vez debe aparecer el producto recién agregado
+        // Se llamará el método “getProducts” nuevamente, esta vez debe aparecer el producto recién agregado
 
-    customLog(
-        productManager.getProducts()
-    )
+        getProducts = await productManager.getProducts()
 
-    // Se llamará al método “addProduct” con los mismos campos de arriba, debe arrojar un error porque el código estará repetido.
+        customLog(getProducts)
 
-    productManager.addProduct(
-        'producto prueba',
-        'Este es un producto prueba',
-        200,
-        'Sin imagen',
-        'abc123',
-        25
-    )
+        // Se llamará al método “getProductById” y se corroborará que devuelva el producto con el id especificado,
+        // en caso de no existir, debe arrojar un error.
 
-} catch (error) {
-    
-    customLog(error.message)
+        const productoEncontrado = await productManager.getProductById(1)
+
+        customLog(productoEncontrado)
+
+        // Se llamará al método “updateProduct” y se intentará cambiar un campo de algún producto,
+        // se evaluará que no se elimine el id y que sí se haya hecho la actualización.
+
+        const productToUpdate = {
+            id: 1,
+            ...(new Product(
+                'producto prueba',
+                'Este es un producto prueba',
+                199,
+                'Sin imagen',
+                'abc123',
+                25
+            ))
+        }
+
+        await productManager.updateProduct(productToUpdate)
+
+        getProducts = await productManager.getProducts()
+
+        customLog(getProducts)
+
+        // Se llamará al método “deleteProduct”, se evaluará que realmente se elimine el producto 
+        // o que arroje un error en caso de no existir.
+
+        await productManager.deleteProduct(1)
+
+        getProducts = await productManager.getProducts()
+
+        customLog(getProducts)
+
+    } catch (error) {
+
+        customLog(error)
+
+    }
 
 }
 
-try {
-
-    // Se evaluará que getProductById devuelva error si no encuentra el producto o el producto en caso de encontrarlo
-
-    customLog(productManager.getProductById(1))
-
-} catch (error) {
-
-    customLog(error.message)
-    
-}
+test()
