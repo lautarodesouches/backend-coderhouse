@@ -19,7 +19,7 @@ app.get('/products', async (request, response) => {
 
     const products = await productManager.getProducts()
 
-    if (limit) products.length = limit
+    if (limit < products.length) products.length = limit
 
     response.json(products)
 
