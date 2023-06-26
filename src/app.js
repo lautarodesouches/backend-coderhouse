@@ -1,5 +1,6 @@
 import express from 'express'
-import ProductManager from './class/ProductManager/index.js'
+import ProductRouter from './routes/product.router.js'
+import CartRouter from './routes/cart.router.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -9,41 +10,8 @@ app.use(express.json())
 
 // -----------------------------------------------------------------------------------------
 
-const productManager = new ProductManager('src/db/products.json')
-
-// -----------------------------------------------------------------------------------------
-
-app.get('/products', async (request, response) => {
-
-    const limit = request.query.limit
-
-    const products = await productManager.getProducts()
-
-    if (limit < products.length) products.length = limit
-
-    response.json(products)
-
-})
-
-app.get('/products/:pid', async (request, response) => {
-
-    try {
-
-        const pid = parseInt(request.params.pid)
-
-        const product = await productManager.getProductById(pid)
-
-        return response.json(product)
-
-    } catch (error) {
-
-        response.status(404).json({
-            message: error.message
-        })
-
-    }
-
-})
+app.use('/api/products', ProductRouter)
+app.use('/api/carts', CartRouter)
 
 // -----------------------------------------------------------------------------------------
 

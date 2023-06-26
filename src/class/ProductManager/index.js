@@ -1,4 +1,5 @@
 import { promises } from 'fs'
+import Product from '../Product/index.js'
 
 export default class ProductManager {
 
@@ -17,7 +18,7 @@ export default class ProductManager {
 
             this.products = JSON.parse(productsJson)
 
-            this.#id = this.products.reduce((maxId, product) => Math.max(maxId, product.id), 1) + 1
+            this.#id = this.generateId()
 
         } catch (error) {
             this.products = []
@@ -35,7 +36,9 @@ export default class ProductManager {
 
         await this.getProducts()
 
-        if (this.areEmptyValues(product)) throw new Error(`Los campos son obligatorios`)
+        const productToAdd = Object.assign(new Product(), product)
+        
+        if (!productToAdd.hasAllValuesSet()) throw new Error(`Los campos son obligatorios`)
 
         if (this.isCodeRepeated(product.code)) throw new Error(`El codigo ${product.code} se encuentra en uso`)
 
@@ -44,17 +47,18 @@ export default class ProductManager {
         await this.saveProducts()
 
         this.incrementId()
+
     }
 
     async getProductById(id) {
 
         await this.getProducts()
 
-        const productoEncontrado = this.products.find(product => product.id === id)
+        const productFound = this.products.find(product => product.id === id)
 
-        if (!productoEncontrado) throw new Error('Producto no encontrado')
+        if (!productFound) throw new Error('Producto no encontrado')
 
-        return productoEncontrado
+        return productFound
 
     }
 
@@ -78,9 +82,9 @@ export default class ProductManager {
 
         await this.getProducts()
 
-        const objetoEncontrado = await this.getProductById(id)
+        const productFound = await this.getProductById(id)
 
-        this.products.splice(this.products.indexOf(objetoEncontrado), 1)
+        this.products.splice(this.products.indexOf(productFound), 1)
 
         await this.saveProducts()
 
@@ -96,9 +100,8 @@ export default class ProductManager {
         this.id++
     }
 
-    areEmptyValues(product) {
-        const values = Object.values(product)
-        return values.includes(undefined) || values.includes(null)
+    generateId() {
+        return this.products.reduce((maxId, product) => Math.max(maxId, product.id), 1) + 1
     }
 
 }
