@@ -1,1 +1,112 @@
-[{"id":1,"title":"Xiaomi Redmi Note 11","description":"Celular","price":108999,"thumnail":[],"code":"001","stock":32,"status":true,"category":"Celulares"},{"id":2,"title":"LG B220","description":"Celular","price":18599,"thumnail":[],"code":"002","stock":1,"status":true,"category":"Celulares"},{"id":3,"title":"Moto E13","description":"Celular","price":46999,"thumnail":[],"code":"003","stock":71,"status":true,"category":"Celulares"},{"id":4,"title":"Moto G23","description":"Celular","price":75999,"thumnail":[],"code":"004","stock":162,"status":true,"category":"Celulares"},{"id":5,"title":"Galaxy A04e","description":"Celular","price":49999,"thumnail":[],"code":"005","stock":14,"status":true,"category":"Celulares"},{"id":6,"title":"Bangho Max L5","description":"Notebook","price":319999,"thumnail":[],"code":"006","stock":56,"status":true,"category":"Notebooks"},{"id":7,"title":"Dell Inspiron","description":"Notebook","price":316000,"thumnail":[],"code":"007","stock":25,"status":true,"category":"Notebooks"},{"id":8,"title":"HP 15","description":"Notebook","price":459000,"thumnail":[],"code":"008","stock":17,"status":true,"category":"Notebooks"},{"id":9,"title":"Gadnic Cloudbook","description":"Notebook","price":125000,"thumnail":[],"code":"009","stock":116,"status":true,"category":"Notebooks"},{"id":10,"title":"Macbook Air 13","description":"Notebook","price":499000,"thumnail":"Sin imagen","code":"010","stock":45,"status":true,"category":"Notebooks"}]
+[
+    {
+        "id": 1,
+        "title": "Xiaomi Redmi Note 11",
+        "description": "Celular",
+        "price": 108999,
+        "thumnail": [],
+        "code": "001",
+        "stock": 32,
+        "status": true,
+        "category": "Celulares"
+    },
+    {
+        "id": 2,
+        "title": "LG B220",
+        "description": "Celular",
+        "price": 18599,
+        "thumnail": [],
+        "code": "002",
+        "stock": 1,
+        "status": true,
+        "category": "Celulares"
+    },
+    {
+        "id": 3,
+        "title": "Moto E13",
+        "description": "Celular",
+        "price": 46999,
+        "thumnail": [],
+        "code": "003",
+        "stock": 71,
+        "status": true,
+        "category": "Celulares"
+    },
+    {
+        "id": 4,
+        "title": "Moto G23",
+        "description": "Celular",
+        "price": 75999,
+        "thumnail": [],
+        "code": "004",
+        "stock": 162,
+        "status": true,
+        "category": "Celulares"
+    },
+    {
+        "id": 5,
+        "title": "Galaxy A04e",
+        "description": "Celular",
+        "price": 49999,
+        "thumnail": [],
+        "code": "005",
+        "stock": 14,
+        "status": true,
+        "category": "Celulares"
+    },
+    {
+        "id": 6,
+        "title": "Bangho Max L5",
+        "description": "Notebook",
+        "price": 319999,
+        "thumnail": [],
+        "code": "006",
+        "stock": 56,
+        "status": true,
+        "category": "Notebooks"
+    },
+    {
+        "id": 7,
+        "title": "Dell Inspiron",
+        "description": "Notebook",
+        "price": 316000,
+        "thumnail": [],
+        "code": "007",
+        "stock": 25,
+        "status": true,
+        "category": "Notebooks"
+    },
+    {
+        "id": 8,
+        "title": "HP 15",
+        "description": "Notebook",
+        "price": 459000,
+        "thumnail": [],
+        "code": "008",
+        "stock": 17,
+        "status": true,
+        "category": "Notebooks"
+    },
+    {
+        "id": 9,
+        "title": "Gadnic Cloudbook",
+        "description": "Notebook",
+        "price": 125000,
+        "thumnail": [],
+        "code": "009",
+        "stock": 116,
+        "status": true,
+        "category": "Notebooks"
+    },
+    {
+        "id": 10,
+        "title": "Macbook Air 13",
+        "description": "Notebook",
+        "price": 499000,
+        "thumnail": "Sin imagen",
+        "code": "010",
+        "stock": 45,
+        "status": true,
+        "category": "Notebooks"
+    }
+]

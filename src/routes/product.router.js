@@ -15,8 +15,8 @@ router.get('/', async (request, response) => {
 
     const limit = request.query.limit
 
-    const products = await productManager.getProducts()
-
+    const products = await productManager.getData()
+    
     if (limit < products.length) products.length = limit
 
     response.json(products)
@@ -29,7 +29,7 @@ router.get('/:pid', async (request, response) => {
 
         const pid = parseInt(request.params.pid)
 
-        const product = await productManager.getProductById(pid)
+        const product = await productManager.getItemById(pid)
 
         return response.json(product)
 
@@ -47,7 +47,7 @@ router.post('/', async (request, response) => {
 
     try {
         
-        await productManager.addProduct(request.body)
+        await productManager.addItem(request.body)
 
         response.status(201).json('Producto agregado')
         
@@ -67,7 +67,7 @@ router.put('/:pid', async (request, response) => {
 
         request.body.id = pid
 
-        await productManager.updateProduct(request.body)
+        await productManager.updateItem(request.body)
 
         response.status(200).json('Producto modificado')
         
@@ -85,7 +85,7 @@ router.delete('/:pid', async (request, response) => {
         
         const pid = parseInt(request.params.pid)
 
-        await productManager.deleteProduct(pid)
+        await productManager.deleteItemById(pid)
 
         response.status(204).json()
         

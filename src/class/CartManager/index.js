@@ -1,99 +1,63 @@
 import { promises } from 'fs'
 import Cart from '../Cart/index.js'
+import Manager from '../Manager/index.js'
 
-export default class CartManager {
-
-    #id = 1
+export default class CartManager extends Manager {
 
     constructor(path) {
-        this.path = path
-        this.carts = []
-    }
-
-    async getCarts() {
-
-        try {
-
-            const cartsJson = await promises.readFile(this.path, 'utf-8')
-
-            this.carts = JSON.parse(cartsJson)
-
-            this.#id = this.generateId()
-
-        } catch (error) {
-            this.carts = []
-        }
-
-        return this.carts
-
-    }
-
-    async saveCarts() {
-        await promises.writeFile(this.path, JSON.stringify(this.carts))
+        super(path)
     }
 
     async createCart() {
 
-        await this.getCarts()
+        await this.getData()
 
-        const cart = new Cart(this.#id)
+        console.log("ID ------------ " + this.id);
 
-        this.carts.push(cart)
+        const cart = new Cart(this.id)
 
-        await this.saveCarts()
+        this.data.push(cart)
+
+        await this.saveData()
 
         this.incrementId()
 
     }
 
-    async getCartById(id) {
-
-        await this.getCarts()
-
-        const cartFound = this.carts.find(cart => cart.id === id)
-
-        if (!cartFound) throw new Error('Carrito no encontrado')
-
-        return cartFound
-
-    }
-
     async addProduct(cartId, productId) {
 
-        await this.getCarts()
+        await this.getData()
 
         if (!this.hasCartWithId(cartId)) throw new Error('Carrito no encontrado')
 
         if (!await this.productExists(productId)) throw new Error('Producto no existe')
 
-        this.carts = this.carts.map(cart => {
+        this.data = this.data.map(cart => {
 
-            if (cart.id === cartId) {
+            if (cart.id !== cartId) return cart
 
-                if (cart.products.some(product => product.product === productId)) {
+            if (cart.products.some(product => product.product === productId)) {
 
-                    cart.products.map(product => {
+                cart.products.map(product => {
 
-                        if (product.product === productId) product.quantity++
-                        return product
+                    if (product.product === productId) product.quantity++
+                    return product
 
-                    })
+                })
 
-                } else {
-                    cart.products.push({ product: productId, quantity: 1 })
-                }
-
+            } else {
+                cart.products.push({ product: productId, quantity: 1 })
             }
 
             return cart
         })
 
-        await this.saveCarts()
+        await this.saveData()
 
     }
 
     hasCartWithId(id) {
-        return this.carts.some(cart => cart.id === id)
+        return this.data.some(cart => cart.id === id)
     }
 
     async productExists(productId) {
@@ -104,14 +68,6 @@ export default class CartManager {
 
         return products.some(product => product.id === productId)
 
-    }
-
-    incrementId() {
-        this.id++
-    }
-
-    generateId() {
-        return this.carts.reduce((maxId, product) => Math.max(maxId, product.id), 1) + 1
     }
 
 }

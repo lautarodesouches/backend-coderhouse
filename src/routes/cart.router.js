@@ -21,7 +21,7 @@ router.get('/:cid', async (req, res) => {
 
     const cid = parseInt(req.params.cid)
 
-    const cart = await cartManager.getCartById(cid)
+    const cart = await cartManager.getItemById(cid)
 
     res.status(200).json(cart)
 
