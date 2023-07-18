@@ -46,10 +46,12 @@ app.get('/', async (req, res) => {
 
 })
 
-app.get('/realtimeproducts', (req, res) => {
+app.get('/realtimeproducts', async (req, res) => {
 
-    res.render('index', {
-        products: []
+    const products = await productManager.getData()
+
+    res.render('realtime', {
+        products
     })
 
 })
@@ -64,5 +66,37 @@ const io = new Server(httpServer)
 io.on('connection', socket => {
 
     console.log('cliente conectado')
+
+    socket.on('add-product', async data => {
+        
+        try {
+            
+            await productManager.addProduct(data)
+
+            const products = await productManager.getData()
+
+            socket.emit('update-products', {
+                products,
+                message: 'Producto agregado'
+            })
+
+        } catch (error) {
+            console.warn(error)
+        }
+
+    })
+
+    socket.on('delete-product', async id => {
+
+        await productManager.deleteItemById(parseInt(id))
+
+        const products = await productManager.getData()
+
+        socket.emit('update-products', {
+            products,
+            message: 'Producto eliminado'
+        })
+
+    })
 
 })

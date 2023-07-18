@@ -10,13 +10,13 @@ export default class ProductManager extends Manager {
     async addProduct(product) {
 
         await this.getData()
-
+        
         const productToAdd = Object.assign(new Product(), product)
-
+        
         if (!productToAdd.hasAllValuesSet()) throw new Error(`Los campos son obligatorios`)
-
+        
         if (this.isCodeRepeated(product.code)) throw new Error(`El codigo ${product.code} se encuentra en uso`)
-
+        
         await this.addItem(product)
 
     }
