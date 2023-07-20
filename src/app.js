@@ -75,7 +75,7 @@ io.on('connection', socket => {
 
             const products = await productManager.getData()
 
-            socket.emit('update-products', {
+            io.emit('update-products', {
                 products,
                 message: 'Producto agregado'
             })
@@ -92,7 +92,7 @@ io.on('connection', socket => {
 
         const products = await productManager.getData()
 
-        socket.emit('update-products', {
+        io.emit('update-products', {
             products,
             message: 'Producto eliminado'
         })
