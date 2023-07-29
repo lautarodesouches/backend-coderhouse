@@ -1,6 +1,7 @@
 import express from 'express'
 import ProductRouter from './routes/product.router.js'
 import CartRouter from './routes/cart.router.js'
+import UsersRouter from './routes/users.router.js'
 import handlebars from 'express-handlebars'
 import ProductManager from './class/ProductManager/index.js'
 
@@ -9,11 +10,12 @@ import ProductManager from './class/ProductManager/index.js'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 import { Server } from 'socket.io'
+import mongoose from 'mongoose'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-// -----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------- EXPRESS
 
 const app = express()
 
@@ -21,18 +23,32 @@ app.use(express.json())
 
 app.use('/static', express.static(__dirname + '/public'))
 
-// -----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------- MOGOOSE
+
+mongoose.connect('mongodb+srv://coder_admin:<FGxaxhWbx3yIjVXW>@cluster0.vkjgmee.mongodb.net/?retryWrites=true&w=majority', error => {
+
+    if (error) {
+
+        console.log('Cannot connect to database ' + error)
+        process.exit()
+
+    }
+
+})
+
+// ----------------------------------------------------------------------------------------- HANDLEBARS
 
 app.engine('handlebars', handlebars.engine())
 app.set('views', __dirname + '/views')
 app.set('view engine', 'handlebars')
 
-// -----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------- ROUTERS
 
 app.use('/api/products', ProductRouter)
 app.use('/api/carts', CartRouter)
+app.use('/api/users', UsersRouter)
 
-// -----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------- PRODUCT MANAGER
 
 const productManager = new ProductManager('src/db/productos.json')
 
@@ -56,7 +72,7 @@ app.get('/realtimeproducts', async (req, res) => {
 
 })
 
-// -----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------- SOCKET
 
 const PORT = 8080
 
@@ -68,9 +84,9 @@ io.on('connection', socket => {
     console.log('cliente conectado')
 
     socket.on('add-product', async data => {
-        
+
         try {
-            
+
             await productManager.addProduct(data)
 
             const products = await productManager.getData()
