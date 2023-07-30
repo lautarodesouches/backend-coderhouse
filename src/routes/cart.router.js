@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
 
     await cartManager.createCart()
 
-    res.send(Response.success('Carrito creado'))
+    res.status(200).send(Response.success('Carrito creado'))
 
 })
 
@@ -24,20 +24,20 @@ router.get('/:cid', async (req, res) => {
 
     const cart = await cartManager.getItemById(cid)
 
-    res.send(Response.success('Carrito encontrado', cart))
+    res.status(200).send(Response.success('Carrito encontrado', cart))
 
 })
 
 router.post('/:cid/product/:pid', async (req, res) => {
 
     try {
-        
+
         const cid = parseInt(req.params.cid)
         const pid = parseInt(req.params.pid)
-    
+
         await cartManager.addProduct(cid, pid)
-    
-        res.send(Response.added('Producto agregado al carrito'))
+
+        res.status(201).send(Response.added('Producto agregado al carrito'))
 
     } catch (error) {
 

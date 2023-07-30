@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
 
     if (limit < products.length) products.length = limit
 
-    res.send(Response.success('Productos encontrados', products))
+    res.status(200).send(Response.success('Productos encontrados', products))
 
 })
 
@@ -32,7 +32,7 @@ router.get('/:pid', async (req, res) => {
 
         const product = await productManager.getItemById(pid)
 
-        res.send(Response.success('Producto encontrado', product))
+        res.status(200).send(Response.success('Producto encontrado', product))
 
     } catch (error) {
 
@@ -46,9 +46,9 @@ router.post('/', async (req, res) => {
 
     try {
 
-        await productManager.addItem(req.body)
+        await productManager.addProduct(req.body)
 
-        res.send(Response.added('Producto agregado', product))
+        res.status(201).send(Response.added('Producto agregado'))
 
     } catch (error) {
 
@@ -68,7 +68,7 @@ router.put('/:pid', async (req, res) => {
 
         await productManager.updateItem(req.body)
 
-        res.send(Response.success('Producto modificado'))
+        res.status(201).send(Response.success('Producto modificado'))
 
     } catch (error) {
 
@@ -86,7 +86,7 @@ router.delete('/:pid', async (req, res) => {
 
         await productManager.deleteItemById(pid)
 
-        res.send(Response.success('Productos eliminado'))
+        res.status(201).send(Response.success('Productos eliminado'))
 
     } catch (error) {
 
