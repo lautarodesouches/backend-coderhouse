@@ -1,8 +1,12 @@
-import { Router } from 'express';
-import { userModel } from '../class/User';
+import { Router } from 'express'
+import { userModel } from '../class/User/index.js'
+import Response from '../class/Response/index.js'
 
+// -----------------------------------------------------------------------------------------
 
 const router = Router()
+
+// -----------------------------------------------------------------------------------------
 
 router.get('/', async (req, res) => {
 
@@ -10,9 +14,13 @@ router.get('/', async (req, res) => {
 
         let users = await userModel.find()
 
-        res.send({ result: 'success', payload: users })
+        res.send(Response.success('Usuarios encontrados', users))
 
     } catch (error) {
+        
+        console.error(error)
+
+        res.send(Response.error())
 
     }
 

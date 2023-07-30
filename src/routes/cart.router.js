@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import CartManager from '../class/CartManager/index.js'
+import Response from '../class/Response/index.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -13,7 +14,7 @@ router.post('/', async (req, res) => {
 
     await cartManager.createCart()
 
-    res.status(201).json('Carrito creado')
+    res.send(Response.success('Carrito creado'))
 
 })
 
@@ -23,7 +24,7 @@ router.get('/:cid', async (req, res) => {
 
     const cart = await cartManager.getItemById(cid)
 
-    res.status(200).json(cart)
+    res.send(Response.success('Carrito encontrado', cart))
 
 })
 
@@ -36,11 +37,11 @@ router.post('/:cid/product/:pid', async (req, res) => {
     
         await cartManager.addProduct(cid, pid)
     
-        res.status(201).json('Producto agregado al carrito')
+        res.send(Response.added('Producto agregado al carrito'))
 
     } catch (error) {
-        
-        res.status(500).json(error.message)
+
+        res.send(Response.error(error.message))
 
     }
 

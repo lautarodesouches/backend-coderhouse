@@ -11,6 +11,7 @@ import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 import { Server } from 'socket.io'
 import mongoose from 'mongoose'
+import { DB_PASSWORD, DB_USER } from './constants/index.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -25,16 +26,18 @@ app.use('/static', express.static(__dirname + '/public'))
 
 // ----------------------------------------------------------------------------------------- MOGOOSE
 
-mongoose.connect('mongodb+srv://coder_admin:<FGxaxhWbx3yIjVXW>@cluster0.vkjgmee.mongodb.net/?retryWrites=true&w=majority', error => {
+try {
 
-    if (error) {
+    await mongoose.connect(`mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.vkjgmee.mongodb.net/?retryWrites=true&w=majority`)
 
-        console.log('Cannot connect to database ' + error)
-        process.exit()
+    console.log('Connected to database')
 
-    }
+} catch (error) {
 
-})
+    console.log('Cannot connect to database ' + error)
+    process.exit()
+
+}
 
 // ----------------------------------------------------------------------------------------- HANDLEBARS
 

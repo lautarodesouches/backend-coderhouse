@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import ProductManager from '../class/ProductManager/index.js'
+import Response from '../class/Response/index.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -11,87 +12,85 @@ const productManager = new ProductManager('src/db/productos.json')
 
 // -----------------------------------------------------------------------------------------
 
-router.get('/', async (request, response) => {
+router.get('/', async (req, res) => {
 
-    const limit = request.query.limit
+    const limit = req.query.limit
 
     const products = await productManager.getData()
-    
+
     if (limit < products.length) products.length = limit
 
-    response.json(products)
+    res.send(Response.success('Productos encontrados', products))
 
 })
 
-router.get('/:pid', async (request, response) => {
+router.get('/:pid', async (req, res) => {
 
     try {
 
-        const pid = parseInt(request.params.pid)
+        const pid = parseInt(req.params.pid)
 
         const product = await productManager.getItemById(pid)
 
-        return response.json(product)
+        res.send(Response.success('Producto encontrado', product))
 
     } catch (error) {
 
-        response.status(404).json({
-            message: error.message
-        })
+        res.send(Response.notFound(error.message))
 
     }
 
 })
 
-router.post('/', async (request, response) => {
+router.post('/', async (req, res) => {
 
     try {
-        
-        await productManager.addItem(request.body)
 
-        response.status(201).json('Producto agregado')
-        
+        await productManager.addItem(req.body)
+
+        res.send(Response.added('Producto agregado', product))
+
     } catch (error) {
-        
-        response.status(500).json(error.message)
+
+        res.send(Response.error(error.message))
 
     }
 
 })
 
-router.put('/:pid', async (request, response) => {
+router.put('/:pid', async (req, res) => {
 
     try {
-        
-        const pid = parseInt(request.params.pid)
 
-        request.body.id = pid
+        const pid = parseInt(req.params.pid)
 
-        await productManager.updateItem(request.body)
+        req.body.id = pid
 
-        response.status(200).json('Producto modificado')
-        
+        await productManager.updateItem(req.body)
+
+        res.send(Response.success('Producto modificado'))
+
     } catch (error) {
-        
-        response.status(500).json(error.message)
+
+        res.send(Response.error(error.message))
 
     }
 
 })
 
-router.delete('/:pid', async (request, response) => {
+router.delete('/:pid', async (req, res) => {
 
     try {
-        
-        const pid = parseInt(request.params.pid)
+
+        const pid = parseInt(req.params.pid)
 
         await productManager.deleteItemById(pid)
 
-        response.status(204).json()
-        
+        res.send(Response.success('Productos eliminado'))
+
     } catch (error) {
-        
-        response.status(500).json(error.message)
+
+        res.send(Response.error(error.message))
 
     }
 

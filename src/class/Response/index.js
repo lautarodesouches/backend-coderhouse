@@ -11,8 +11,16 @@ class Response {
         return new Response('Success', 200, message, data)
     }
 
+    static added(message = '', data = []) {
+        return new Response('Success', 201, message, data)
+    }
+
     static error(message = 'Ocurrió un error', data = []) {
         return new Response('Error', 500, message, data)
+    }
+
+    static notFound(message = 'No encontrado', data = []) {
+        return new Response('Error', 404, message, data)
     }
 
 }
