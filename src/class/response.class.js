@@ -12,7 +12,7 @@ class Response {
         return new Response('Success', message, data)
     }
 
-    static added(message = '', data = []) {
+    static added(message = 'Agregado', data = []) {
         return new Response('Success', message, data)
     }
 

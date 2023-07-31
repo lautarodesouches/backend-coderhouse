@@ -1,17 +1,16 @@
 import express from 'express'
-import ProductRouter from './routes/product.router.js'
+import mongoose from 'mongoose'
+import handlebars from 'express-handlebars'
 import CartRouter from './routes/cart.router.js'
 import UsersRouter from './routes/users.router.js'
-import handlebars from 'express-handlebars'
-import ProductManager from './class/ProductManager/index.js'
+import ProductRouter from './routes/product.router.js'
+import ProductManager from './dao/fileManager/product.manager.js'
+import { Server } from 'socket.io'
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
+import { DB_PASSWORD, DB_USER } from './constants/index.js'
 
 // -----------------------------------------------------------------------------------------
-
-import { fileURLToPath } from 'url'
-import { dirname } from 'path'
-import { Server } from 'socket.io'
-import mongoose from 'mongoose'
-import { DB_PASSWORD, DB_USER } from './constants/index.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -28,7 +27,9 @@ app.use('/static', express.static(__dirname + '/public'))
 
 try {
 
-    await mongoose.connect(`mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.vkjgmee.mongodb.net/?retryWrites=true&w=majority`)
+    await mongoose.connect(`mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.vkjgmee.mongodb.net/?retryWrites=true&w=majority`, {
+        dbName: 'ecommerce'
+    })
 
     console.log('Connected to database')
 

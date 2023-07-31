@@ -1,12 +1,14 @@
 import { promises } from 'fs'
-import Cart from '../Cart/index.js'
-import Manager from '../Manager/index.js'
+import Manager from './manager.js'
+import Cart from '../../class/cart.class.js'
 
 export default class CartManager extends Manager {
 
     constructor(path) {
         super(path)
     }
+
+    // -----------------------------
 
     async createCart() {
 
@@ -56,10 +58,6 @@ export default class CartManager extends Manager {
 
     }
 
-    hasCartWithId(id) {
-        return this.data.some(cart => cart.id === id)
-    }
-
     async productExists(productId) {
 
         const productsJson = await promises.readFile('src/db/productos.json', 'utf-8')
@@ -68,6 +66,12 @@ export default class CartManager extends Manager {
 
         return products.some(product => product.id === productId)
 
+    }
+
+    // -----------------------------
+
+    hasCartWithId(id) {
+        return this.data.some(cart => cart.id === id)
     }
 
 }

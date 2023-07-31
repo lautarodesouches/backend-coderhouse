@@ -1,6 +1,7 @@
 import { Router } from 'express'
-import ProductManager from '../class/ProductManager/index.js'
-import Response from '../class/Response/index.js'
+import Response from '../class/response.class.js'
+import { productModel } from '../dao/mongoManager/models/product.model.js'
+import { ObjectId } from 'mongodb'
 
 // -----------------------------------------------------------------------------------------
 
@@ -8,15 +9,11 @@ const router = Router()
 
 // -----------------------------------------------------------------------------------------
 
-const productManager = new ProductManager('src/db/productos.json')
-
-// -----------------------------------------------------------------------------------------
-
 router.get('/', async (req, res) => {
 
     const limit = req.query.limit
 
-    const products = await productManager.getData()
+    const products = await productModel.find()
 
     if (limit < products.length) products.length = limit
 
@@ -28,15 +25,17 @@ router.get('/:pid', async (req, res) => {
 
     try {
 
-        const pid = parseInt(req.params.pid)
+        const pid = req.params.pid
 
-        const product = await productManager.getItemById(pid)
+        const product = await productModel.findById(pid)
+
+        if(!product) throw new Error('Producto no encontrado')
 
         res.status(200).send(Response.success('Producto encontrado', product))
 
     } catch (error) {
 
-        res.send(Response.notFound(error.message))
+        res.status(404).send(Response.notFound(error.message))
 
     }
 
@@ -46,13 +45,13 @@ router.post('/', async (req, res) => {
 
     try {
 
-        await productManager.addProduct(req.body)
+        await productModel.create(req.body)
 
         res.status(201).send(Response.added('Producto agregado'))
 
     } catch (error) {
 
-        res.send(Response.error(error.message))
+        res.status(500).send(Response.error(error.message))
 
     }
 
@@ -62,17 +61,28 @@ router.put('/:pid', async (req, res) => {
 
     try {
 
-        const pid = parseInt(req.params.pid)
+        const filter = { _id: new ObjectId(req.params.pid) }
 
-        req.body.id = pid
+        const update = {
+            $set: {
+                title: req.body.title,
+                description: req.body.description,
+                price: req.body.price,
+                thumnail: req.body.thumnail,
+                code: req.body.code,
+                stock: req.body.stock,
+                status: req.body.status,
+                category: req.body.category
+            }
+        }
 
-        await productManager.updateItem(req.body)
+        await productModel.updateOne(filter, update)
 
         res.status(201).send(Response.success('Producto modificado'))
 
     } catch (error) {
 
-        res.send(Response.error(error.message))
+        res.status(500).send(Response.error(error.message))
 
     }
 
@@ -82,15 +92,15 @@ router.delete('/:pid', async (req, res) => {
 
     try {
 
-        const pid = parseInt(req.params.pid)
+        const filter = { _id: new ObjectId(req.params.pid) }
 
-        await productManager.deleteItemById(pid)
+        await productModel.deleteOne(filter)
 
-        res.status(201).send(Response.success('Productos eliminado'))
+        res.status(204).send(Response.success('Productos eliminado'))
 
     } catch (error) {
 
-        res.send(Response.error(error.message))
+        res.status(500).send(Response.error(error.message))
 
     }
 

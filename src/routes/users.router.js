@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { userModel } from '../class/User/index.js'
-import Response from '../class/Response/index.js'
+import { userModel } from '../dao/mongoManager/models/user.model.js'
+import Response from '../class/response.class.js'
 
 // -----------------------------------------------------------------------------------------
 
