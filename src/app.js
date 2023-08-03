@@ -9,6 +9,7 @@ import { Server } from 'socket.io'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { DB_PASSWORD, DB_USER } from './constants/index.js'
+import { MessagesModel } from './dao/mongoManager/models/message.model.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -35,7 +36,7 @@ try {
 
 } catch (error) {
 
-    console.log('\n--- Cannot connect to database ' + error + '---\n')
+    console.log('\n--- Cannot connect to database ' + error + '---')
     process.exit()
 
 }
@@ -76,19 +77,40 @@ app.get('/realtimeproducts', async (req, res) => {
 
 })
 
+app.get('/chat', async (req, res) => {
+
+    const data = await MessagesModel.find()
+
+    const reverse = data.reverse()
+
+    const chat = []
+
+    reverse.forEach(message => {
+        chat.push({
+            user: message.user,
+            content: message.content
+        })
+    })
+
+    res.render('chat', { chat })
+
+})
+
 // ----------------------------------------------------------------------------------------- SOCKET
 
 const PORT = 8080
 
 const httpServer = app.listen(PORT, () => {
-    console.log(`\n--- Server running in port ${PORT} --> http://localhost:${PORT}/ \n`)
+    console.log(`\n--- Server running in port ${PORT} --> http://localhost:${PORT}/`)
 })
 
 const io = new Server(httpServer)
 
 io.on('connection', socket => {
 
-    console.log('cliente conectado')
+    console.log('\n+-- Cliente conectado')
+
+    // PRODUCT
 
     socket.on('add-product', async data => {
 
@@ -119,6 +141,20 @@ io.on('connection', socket => {
             products,
             message: 'Producto eliminado'
         })
+
+    })
+
+    // CHAT
+
+    socket.on('add-message', async message => {
+
+        await MessagesModel.create(message)
+
+        const res = await MessagesModel.find()
+
+        const chat = res.reverse()
+
+        io.emit('update-chat', { chat })
 
     })
 

@@ -1,0 +1,57 @@
+<section class='my-5 d-flex gap-5 flex-column'>
+    <h1 class='text-center'>Chat</h1>
+    <div class='d-flex'>
+        <div class='d-flex gap-2 flex-column w-50' id='chat'>
+            {{#each chat}}
+                <article class='border p-3 rounded'>
+                    <p class='m-0'><b>{{user}}</b>: {{content}}</p>
+                </article>
+            {{/each}}
+        </div>
+        <form class='d-flex flex-column m-auto gap-4' id='form'>
+            <input class='rounded p-2' type="text" placeholder='Mensaje'>
+            <button class='btn btn-primary'>Enviar</button>
+        </form>
+    </div>
+</section>
+<script src="/socket.io/socket.io.js"></script>
+<script>    
+
+    const user = prompt('Ingrese su nombre de usuario')
+
+    const socket    = io()
+
+    const DOM__form      = document.getElementById('form')
+    const DOM__chat      = document.getElementById('chat')
+
+    DOM__form.onsubmit = e => {
+        
+        e.preventDefault()
+        
+        const message = {
+            user,
+            content:    e.target[0].value,
+        }
+
+        socket.emit('add-message', message)
+    }
+
+    socket.on('update-chat', res => {
+
+        DOM__chat.innerHTML = ''
+
+        for(const message of res.chat){
+
+            const article = document.createElement('article')
+
+            article.classList.add('border', 'rounded', 'p-3')
+
+            article.innerHTML = `<p class='m-0'><b>${message.user}</b>: ${message.content}</p>`
+
+            DOM__chat.appendChild(article)
+
+        }
+
+    })
+
+</script>

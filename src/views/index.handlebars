@@ -1,12 +1,12 @@
 <h1 class='mt-5 text-center'>Productos</h1>
 <section class='mt-5 row justify-content-around align-items-stretch' id='products'>
     {{#each products}}
-    <article class='col-12 col-md-3 m-4 py-5 border rounded text-center bg-light' id={{id}}>
-        <h2 class='h4'>{{title}}</h2>
-        <div class='row mt-5'>
-            <h4 class='h5 col-6'>${{price}}</h4>
-            <h4 class='h5 col-6'>{{stock}} Disponibles</h4>
-        </div>
-    </article>
+        <article class='col-12 col-md-3 m-4 py-5 border rounded text-center bg-light' id={{id}}>
+            <h2 class='h4'>{{title}}</h2>
+            <div class='row mt-5'>
+                <h4 class='h5 col-6'>${{price}}</h4>
+                <h4 class='h5 col-6'>{{stock}} Disponibles</h4>
+            </div>
+        </article>
     {{/each}}
 </section>
