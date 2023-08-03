@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import Response from '../class/response.class.js'
-import { productModel } from '../dao/mongoManager/models/product.model.js'
+import { ProductModel } from '../dao/mongoManager/models/product.model.js'
 import { ObjectId } from 'mongodb'
 
 // -----------------------------------------------------------------------------------------
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
 
     const limit = req.query.limit
 
-    const products = await productModel.find()
+    const products = await ProductModel.find()
 
     if (limit < products.length) products.length = limit
 
@@ -27,7 +27,7 @@ router.get('/:pid', async (req, res) => {
 
         const pid = req.params.pid
 
-        const product = await productModel.findById(pid)
+        const product = await ProductModel.findById(pid)
 
         if(!product) throw new Error('Producto no encontrado')
 
@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
 
     try {
 
-        await productModel.create(req.body)
+        await ProductModel.create(req.body)
 
         res.status(201).send(Response.added('Producto agregado'))
 
@@ -76,7 +76,7 @@ router.put('/:pid', async (req, res) => {
             }
         }
 
-        await productModel.updateOne(filter, update)
+        await ProductModel.updateOne(filter, update)
 
         res.status(201).send(Response.success('Producto modificado'))
 
@@ -94,7 +94,7 @@ router.delete('/:pid', async (req, res) => {
 
         const filter = { _id: new ObjectId(req.params.pid) }
 
-        await productModel.deleteOne(filter)
+        await ProductModel.deleteOne(filter)
 
         res.status(204).send(Response.success('Productos eliminado'))
 

@@ -31,11 +31,11 @@ try {
         dbName: 'ecommerce'
     })
 
-    console.log('Connected to database')
+    console.log('\n--- Connected to database ---')
 
 } catch (error) {
 
-    console.log('Cannot connect to database ' + error)
+    console.log('\n--- Cannot connect to database ' + error + '---\n')
     process.exit()
 
 }
@@ -80,7 +80,10 @@ app.get('/realtimeproducts', async (req, res) => {
 
 const PORT = 8080
 
-const httpServer = app.listen(PORT)
+const httpServer = app.listen(PORT, () => {
+    console.log(`\n--- Server running in port ${PORT} --> http://localhost:${PORT}/ \n`)
+})
+
 const io = new Server(httpServer)
 
 io.on('connection', socket => {

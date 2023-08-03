@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { userModel } from '../dao/mongoManager/models/user.model.js'
+import { UserModel } from '../dao/mongoManager/models/user.model.js'
 import Response from '../class/response.class.js'
 
 // -----------------------------------------------------------------------------------------
@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
 
     try {
 
-        let users = await userModel.find()
+        let users = await UserModel.find()
 
         res.send(Response.success('Usuarios encontrados', users))
 

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import Response from '../class/response.class.js'
-import { cartModel } from '../dao/mongoManager/models/cart.model.js'
-import { productModel } from '../dao/mongoManager/models/product.model.js'
+import { CartModel } from '../dao/mongoManager/models/cart.model.js'
+import { ProductModel } from '../dao/mongoManager/models/product.model.js'
 import { ObjectId } from 'mongodb'
 
 // -----------------------------------------------------------------------------------------
@@ -12,7 +12,7 @@ const router = Router()
 
 router.post('/', async (req, res) => {
 
-    await cartModel.create({ products: [] })
+    await CartModel.create({ products: [] })
 
     res.status(201).send(Response.success('Carrito creado'))
 
@@ -22,7 +22,7 @@ router.get('/:cid', async (req, res) => {
 
     const cid = req.params.cid
 
-    const cart = await cartModel.findById(cid)
+    const cart = await CartModel.findById(cid)
 
     if (!cart) throw new Error('Carrito no encontrado')
 
@@ -39,13 +39,13 @@ router.post('/:cid/product/:pid', async (req, res) => {
 
         // Validate if product exits
 
-        const product = await productModel.findById(pid)
+        const product = await ProductModel.findById(pid)
 
         if (!product) throw new Error('Producto inexistente')
 
         // Validate if cart exits
 
-        const cart = await cartModel.findById(cid)
+        const cart = await CartModel.findById(cid)
 
         if (!cart) throw new Error('Carrito inexistente')
 
@@ -82,7 +82,7 @@ router.post('/:cid/product/:pid', async (req, res) => {
 
         }
 
-        await cartModel.updateOne(filter, update)
+        await CartModel.updateOne(filter, update)
 
         res.status(201).send(Response.added('Producto agregado al carrito'))
 

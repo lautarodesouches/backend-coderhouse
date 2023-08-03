@@ -13,4 +13,4 @@ const productScheme = new mongoose.Schema({
     category: { type: String, required: true },
 })
 
-export const productModel = mongoose.model(productCollection, productScheme)
+export const ProductModel = mongoose.model(productCollection, productScheme)
