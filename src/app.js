@@ -2,6 +2,7 @@ import express from 'express'
 import mongoose from 'mongoose'
 import handlebars from 'express-handlebars'
 import CartRouter from './routes/cart.router.js'
+import ChatRouter from './routes/chat.router.js'
 import UsersRouter from './routes/users.router.js'
 import ProductRouter from './routes/product.router.js'
 import ProductManager from './dao/fileManager/product.manager.js'
@@ -52,6 +53,7 @@ app.set('view engine', 'handlebars')
 app.use('/api/products', ProductRouter)
 app.use('/api/carts', CartRouter)
 app.use('/api/users', UsersRouter)
+app.use('/chat', ChatRouter)
 
 // ----------------------------------------------------------------------------------------- PRODUCT MANAGER
 
@@ -74,25 +76,6 @@ app.get('/realtimeproducts', async (req, res) => {
     res.render('realtime', {
         products
     })
-
-})
-
-app.get('/chat', async (req, res) => {
-
-    const data = await MessagesModel.find()
-
-    const reverse = data.reverse()
-
-    const chat = []
-
-    reverse.forEach(message => {
-        chat.push({
-            user: message.user,
-            content: message.content
-        })
-    })
-
-    res.render('chat', { chat })
 
 })
 
