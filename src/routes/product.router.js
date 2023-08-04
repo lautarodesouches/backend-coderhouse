@@ -11,7 +11,7 @@ const router = Router()
 
 router.get('/', async (req, res) => {
 
-    const limit = req.query.limit
+    const { limit, page, sort, query } = req.query
 
     const products = await ProductModel.find()
 
@@ -29,7 +29,7 @@ router.get('/:pid', async (req, res) => {
 
         const product = await ProductModel.findById(pid)
 
-        if(!product) throw new Error('Producto no encontrado')
+        if (!product) throw new Error('Producto no encontrado')
 
         res.status(200).send(Response.success('Producto encontrado', product))
 

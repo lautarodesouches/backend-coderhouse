@@ -61,7 +61,7 @@ router.post('/:cid/product/:pid', async (req, res) => {
 
         // Search if product exists in cart
 
-        const productInCart = cart.products.find(product => product.product === pid)
+        const productInCart = cart.products.find(list => list.product._id.equals(pid))
 
         if (productInCart) {
 
