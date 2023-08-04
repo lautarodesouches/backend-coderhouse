@@ -12,9 +12,9 @@ const router = Router()
 
 router.post('/', async (req, res) => {
 
-    await CartModel.create({ products: [] })
+    const cart = await CartModel.create({ products: [] })
 
-    res.status(201).send(Response.success('Carrito creado'))
+    res.status(201).send(Response.success('Carrito creado', cart))
 
 })
 
