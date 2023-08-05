@@ -15,7 +15,7 @@ const cartScheme = new mongoose.Schema({
     ],
 })
 
-cartScheme.pre('findOne', function () {
+cartScheme.pre('find', function () {
     this.populate('products.product')
 })
 

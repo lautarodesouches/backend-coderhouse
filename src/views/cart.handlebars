@@ -1,0 +1,12 @@
+<section class='my-5'>
+    <h1 class='text-center'>Cart</h1>
+</section>
+<section class='mt-5 row justify-content-around align-items-stretch' id='products'>
+    {{#each products}}
+        <article class='col-12 col-md-3 m-4 py-5 border rounded text-center bg-light'>
+            <h2 class='h4'>{{product.title}}</h2>
+            <h3 class='h5'>{{product.description}}</h3>
+            <h3 class='h5'>Cantidad: {{quantity}}</h3>
+        </article>
+    {{/each}}
+</section>

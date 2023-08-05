@@ -11,13 +11,18 @@ const router = Router()
 
 router.get('/', async (req, res) => {
 
-    const { limit, page, sort, query } = req.query
+    let { limit, page, query, sort } = req.query
 
-    const products = await ProductModel.find()
+    const filter = query ? { title: query } : {}
 
-    if (limit < products.length) products.length = limit
+    const options = {
+        limit: parseInt(limit) || 10,
+        page: parseInt(page) || 1
+    }
 
-    res.status(200).send(Response.success('Productos encontrados', products))
+    const products = await ProductModel.paginate(filter, options)
+
+    res.status(200).send(Response.success(products))
 
 })
 
@@ -31,11 +36,11 @@ router.get('/:pid', async (req, res) => {
 
         if (!product) throw new Error('Producto no encontrado')
 
-        res.status(200).send(Response.success('Producto encontrado', product))
+        res.status(200).send(Response.success(product))
 
     } catch (error) {
 
-        res.status(404).send(Response.notFound(error.message))
+        res.status(404).send(Response.e(error.message))
 
     }
 
@@ -47,7 +52,7 @@ router.post('/', async (req, res) => {
 
         await ProductModel.create(req.body)
 
-        res.status(201).send(Response.added('Producto agregado'))
+        res.status(201).send(Response.succe())
 
     } catch (error) {
 
@@ -78,7 +83,7 @@ router.put('/:pid', async (req, res) => {
 
         await ProductModel.updateOne(filter, update)
 
-        res.status(201).send(Response.success('Producto modificado'))
+        res.status(201).send(Response.success())
 
     } catch (error) {
 
@@ -96,7 +101,7 @@ router.delete('/:pid', async (req, res) => {
 
         await ProductModel.deleteOne(filter)
 
-        res.status(204).send(Response.success('Productos eliminado'))
+        res.status(204).send(Response.success())
 
     } catch (error) {
 

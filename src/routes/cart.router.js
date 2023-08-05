@@ -10,23 +10,23 @@ const router = Router()
 
 // -----------------------------------------------------------------------------------------
 
-router.post('/', async (req, res) => {
-
-    const cart = await CartModel.create({ products: [] })
-
-    res.status(201).send(Response.success('Carrito creado', cart))
-
-})
-
 router.get('/:cid', async (req, res) => {
 
     const cid = req.params.cid
 
-    const cart = await CartModel.findById(cid)
+    const cart = await CartModel.find({ _id: cid })
 
     if (!cart) throw new Error('Carrito no encontrado')
 
-    res.status(200).send(Response.success('Carrito encontrado', cart))
+    res.status(200).send(Response.success(cart))
+
+})
+
+router.post('/', async (req, res) => {
+
+    const cart = await CartModel.create({ products: [] })
+
+    res.status(201).send(Response.success(cart))
 
 })
 
@@ -37,17 +37,9 @@ router.post('/:cid/product/:pid', async (req, res) => {
         const cid = req.params.cid
         const pid = req.params.pid
 
-        // Validate if product exits
+        await checkIfProductExits(pid)
 
-        const product = await ProductModel.findById(pid)
-
-        if (!product) throw new Error('Producto inexistente')
-
-        // Validate if cart exits
-
-        const cart = await CartModel.findById(cid)
-
-        if (!cart) throw new Error('Carrito inexistente')
+        const cart = await checkIfCartExists(cid)
 
         // Set filter
 
@@ -84,7 +76,7 @@ router.post('/:cid/product/:pid', async (req, res) => {
 
         await CartModel.updateOne(filter, update)
 
-        res.status(201).send(Response.added('Producto agregado al carrito'))
+        res.status(201).send(Response.success())
 
     } catch (error) {
 
@@ -93,6 +85,142 @@ router.post('/:cid/product/:pid', async (req, res) => {
     }
 
 })
+
+router.delete('/:cid/products/:pid', async (req, res) => {
+
+    try {
+
+        const cid = req.params.cid
+        const pid = req.params.pid
+
+        const cart = await checkIfCartExists(cid)
+
+        const product = cart.products.find(list => list.product._id.equals(pid))
+
+        await CartModel.updateOne(
+            { _id: cid },
+            {
+                $pull:
+                {
+                    products: product
+                }
+            }
+        )
+
+        res.status(201).send(Response.success())
+
+    } catch (error) {
+
+        res.status(500).send(Response.error(error.message))
+
+    }
+
+})
+
+router.delete('/:cid/', async (req, res) => {
+
+    try {
+
+        const cid = req.params.cid
+
+        const cart = await checkIfCartExists(cid)
+
+        await CartModel.updateOne(
+            { _id: cid },
+            {
+                $set:
+                {
+                    products: []
+                }
+            }
+        )
+
+        res.status(201).send(Response.success())
+
+    } catch (error) {
+
+        res.status(500).send(Response.error(error.message))
+
+    }
+
+})
+
+router.put('/:cid/', async (req, res) => {
+
+    try {
+
+        const cid = req.params.cid
+
+        const cart = await checkIfCartExists(cid)
+
+        await CartModel.updateOne(
+            { _id: cid },
+            {
+                $set:
+                {
+                    'products': req.body
+                }
+            }
+        )
+
+        res.status(201).send(Response.success())
+
+    } catch (error) {
+
+        res.status(500).send(Response.error(error.message))
+
+    }
+
+})
+
+router.put('/:cid/products/:pid/', async (req, res) => {
+
+    try {
+
+        const cid = req.params.cid
+        const pid = req.params.pid
+
+        const cart = await checkIfCartExists(cid)
+
+        await CartModel.updateOne(
+            { _id: cid, 'products.product': pid },
+            {
+                $set:
+                {
+                    'products.$.quantity': req.body.quantity
+                }
+            }
+        )
+
+        res.status(201).send(Response.success())
+
+    } catch (error) {
+
+        res.status(500).send(Response.error(error.message))
+
+    }
+
+})
+
+const checkIfProductExits = async pid => {
+
+    const product = await ProductModel.findById(pid)
+
+    if (!product) throw new Error('Producto inexistente')
+
+    return product
+
+}
+
+const checkIfCartExists = async cid => {
+
+    const cart = await CartModel.findById(cid)
+
+    if (!cart) throw new Error('Carrito inexistente')
+
+    return cart
+
+}
 
 // -----------------------------------------------------------------------------------------
 

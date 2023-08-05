@@ -1,29 +1,31 @@
+import { ObjectId } from 'mongodb'
+
 class Response {
 
-    constructor(status, message, data) {
+    constructor(status, response, message) {
         this.status = status
         this.message = message
-        this.data = data
+        this.payload = response.docs ? response.docs.map(item => {
+            return { ...item.toObject(), _id: item._id.toString() }
+        }) : []
+
+        delete response.docs
+
+        for (const key in response) {
+            this[key] = response[key];
+        }
     }
 
     // ------------------------------------------------------
 
-    static success(message = '', data = []) {
-        return new Response('Success', message, data)
-    }
-
-    static added(message = 'Agregado', data = []) {
-        return new Response('Success', message, data)
+    static success(response = {}) {
+        return new Response('Success', response)
     }
 
     // ------------------------------------------------------
 
-    static error(message = 'Ocurrió un error', data = []) {
-        return new Response('Error', 500, message, data)
-    }
-
-    static notFound(message = 'No encontrado', data = []) {
-        return new Response('Error', message, data)
+    static error(message) {
+        return new Response('Error', [], message)
     }
 
 }

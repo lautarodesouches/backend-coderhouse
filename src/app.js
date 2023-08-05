@@ -11,6 +11,9 @@ import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { DB_PASSWORD, DB_USER } from './constants/index.js'
 import { MessagesModel } from './dao/mongoManager/models/message.model.js'
+import { ProductModel } from './dao/mongoManager/models/product.model.js'
+import Response from './class/response.class.js'
+import { CartModel } from './dao/mongoManager/models/cart.model.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -61,21 +64,76 @@ const productManager = new ProductManager('src/db/productos.json')
 
 app.get('/', async (req, res) => {
 
-    const products = await productManager.getData()
+    let { limit, page, query, sort } = req.query
 
-    res.render('index', {
-        products
-    })
+    const filter = {}
+
+    if (query) {
+        const field = query.split(',')[0]
+        const value = query.split(',')[1]
+
+        filter[field] = parseInt(value) || value
+    }
+
+    const options = {
+        limit: parseInt(limit) || 10,
+        page: parseInt(page) || 1
+    }
+
+    const result = await ProductModel.paginate(filter, options)
+
+    res.render('index', Response.success(result))
 
 })
 
 app.get('/realtimeproducts', async (req, res) => {
 
-    const products = await productManager.getData()
+    const products = await ProductModel.find()
 
     res.render('realtime', {
         products
     })
+
+})
+
+app.get('/products', async (req, res) => {
+
+    let { limit, page, query, sort } = req.query
+
+    const filter = {}
+
+    if (query) {
+        const field = query.split(',')[0]
+        const value = query.split(',')[1]
+
+        filter[field] = parseInt(value) || value
+    }
+
+    const options = {
+        limit: parseInt(limit) || 10,
+        page: parseInt(page) || 1
+    }
+
+    const result = await ProductModel.paginate(filter, options)
+
+    res.render('products', Response.success(result))
+
+})
+
+app.get('/carts/:cid', async (req, res) => {
+
+    const result = await CartModel.findById(req.params.cid).populate('products.product')
+
+    const products = result.products.map(product => {
+        return (
+            {
+                product: product.product.toObject(),
+                quantity: product.quantity
+            }
+        )
+    })
+
+    res.render('cart', { products })
 
 })
 

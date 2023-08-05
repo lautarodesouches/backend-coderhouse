@@ -14,11 +14,9 @@ router.get('/', async (req, res) => {
 
         let users = await UserModel.find()
 
-        res.send(Response.success('Usuarios encontrados', users))
+        res.send(Response.success(users))
 
     } catch (error) {
-        
-        console.error(error)
 
         res.send(Response.error())
 

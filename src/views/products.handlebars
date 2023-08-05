@@ -35,18 +35,41 @@
                 <p class='col-6'>${{price}}</p>
                 <p class='col-6'>{{stock}} Disponibles</p>
             </div>
+            <div class='row mt-5 justify-content-center'>
+                <div class='col-6'>
+                    <button class='btn btn-primary' name='addProduct'>Agregar</button>
+                </div>
+            </div>
         </article>
     {{/each}}
 </section>
 <script>
 
+    const addButtons = document.getElementsByName('addProduct')
+
     const form = document.getElementById('form')
 
     const urlParams = new URLSearchParams(window.location.search)
-
+    
     form[0].value = urlParams.get('limit')
     form[1].value = urlParams.get('page')
     form[2].value = urlParams.get('query')
     form[3].value = urlParams.get('sort')
+
+    addButtons.forEach(button => {
+        button.addEventListener('click', handleAddProduct);
+    });
+
+    function handleAddProduct(id){
+
+        console.log(id)
+
+        const response = await fetch(`http://localhost:8080/api/carts/64cd27dfe12446a96fe07dfd/product/${id}`)
+
+        const data = await response.json()
+
+        console.log(data)
+
+    }
 
 </script>
