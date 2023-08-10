@@ -2,22 +2,38 @@
     <div class='col-12 col-md-4'>
         <h1 class='mt-5 text-center'>Productos</h1>
     </div>
-    <form class='col-12 col-md-8 row align-items-end justify-content-around' id='form'>
+    <form class='col-12 col-md-8 row align-items-end justify-content-around' id='form' method='get'>
         <div class='col-2'>
             <label class='w-100' for="limit">Limit</label>
-            <input class='w-100 rounded border mt-1 px-2' type="number"  name='limit'>
+            <input class='w-100 rounded border mt-1 px-2' type="number"  name='limit' placeholder='10'>
         </div>
         <div class='col-2'>
             <label class='w-100' for="page">Page</label>
-            <input class='w-100 rounded border mt-1 px-2' type="number" name='page'>
+            <input class='w-100 rounded border mt-1 px-2' type="number" name='page' placeholder='1'>
         </div>
         <div class='col-2'>
             <label class='w-100' for="query">Query</label>
-            <input class='w-100 rounded border mt-1 px-2' type="text"  name='query' placeholder='category,Notebooks'>
+            <select class='w-100 rounded border mt-1 px-2' name='query'>
+                <option value="title">Title</option>
+                <option value="description">Description</option>
+                <option value="price">Price</option>
+                <option value="thumnail">Thumnail</option>
+                <option value="code">Code</option>
+                <option value="stock">Stock</option>
+                <option value="status">Status</option>
+                <option value="category">Category</option>
+            </select>
+        </div>
+        <div class='col-2'>
+            <label class='w-100' for="value">Value</label>
+            <input class='w-100 rounded border mt-1 px-2' type="text"  name='value' placeholder='Notebooks'>
         </div>
         <div class='col-2'>
             <label class='w-100' for="sort">Sort</label>
-            <input class='w-100 rounded border mt-1 px-2' type="text" name='sort' placeholder='asc'>
+            <select class='w-100 rounded border mt-1 px-2' name='sort'>
+              <option value="asc">Ascendente</option>
+              <option value="desc">Descendente</option>
+            </select>
         </div>
         <div class='col-2'>
             <button class=' btn btn-secondary rounded'>Aplicar</button>
@@ -37,38 +53,64 @@
             </div>
             <div class='row mt-5 justify-content-center'>
                 <div class='col-6'>
-                    <button class='btn btn-primary' name='addProduct'>Agregar</button>
+                    <button class='btn btn-primary' name='addProduct' data-product-id='{{_id}}'>Agregar</button>
                 </div>
             </div>
         </article>
     {{/each}}
 </section>
+<aside id='aside'>
+
+</aside>
 <script>
 
     const addButtons = document.getElementsByName('addProduct')
 
     const form = document.getElementById('form')
 
+    const aside = document.getElementById('aside')
+
     const urlParams = new URLSearchParams(window.location.search)
     
     form[0].value = urlParams.get('limit')
     form[1].value = urlParams.get('page')
     form[2].value = urlParams.get('query')
-    form[3].value = urlParams.get('sort')
+    form[3].value = urlParams.get('value')
+    form[4].value = urlParams.get('sort')
 
     addButtons.forEach(button => {
-        button.addEventListener('click', handleAddProduct);
+        const productId = button.dataset.productId
+        button.addEventListener('click', () => handleAddProduct(productId));
     });
 
-    function handleAddProduct(id){
+    async function handleAddProduct(id){
 
         console.log(id)
 
-        const response = await fetch(`http://localhost:8080/api/carts/64cd27dfe12446a96fe07dfd/product/${id}`)
+        const response = await fetch(`http://localhost:8080/api/carts/64d42f5a320fbbb046299785/product/${id}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+        })
 
         const data = await response.json()
 
-        console.log(data)
+        if(data.status === "Success") {
+
+            const div = document.createElement('div')
+
+            div.classList.add('alert','alert-primary','position-fixed','top-0','end-0','m-4')
+            div.role = 'alert'
+            div.innerText = 'Producto agregado'
+
+            aside.appendChild(div)
+
+            setTimeout(() => {
+                aside.removeChild(div)
+            }, 4000)
+
+        }
 
     }
 

@@ -64,16 +64,11 @@ const productManager = new ProductManager('src/db/productos.json')
 
 app.get('/', async (req, res) => {
 
-    let { limit, page, query, sort } = req.query
+    let { limit, page, query, value, sort } = req.query
 
     const filter = {}
 
-    if (query) {
-        const field = query.split(',')[0]
-        const value = query.split(',')[1]
-
-        filter[field] = parseInt(value) || value
-    }
+    filter[query] = parseInt(value) || value
 
     const options = {
         limit: parseInt(limit) || 10,
@@ -98,23 +93,18 @@ app.get('/realtimeproducts', async (req, res) => {
 
 app.get('/products', async (req, res) => {
 
-    let { limit, page, query, sort } = req.query
+    let { limit, page, query, value, sort } = req.query
 
     const filter = {}
 
-    if (query) {
-        const field = query.split(',')[0]
-        const value = query.split(',')[1]
-
-        filter[field] = parseInt(value) || value
-    }
+    if (query && value) filter[query] = parseInt(value) || value
 
     const options = {
         limit: parseInt(limit) || 10,
         page: parseInt(page) || 1
     }
 
-    const result = await ProductModel.paginate(filter, options)
+    const result = await ProductModel.paginate(filter, options).sort({price: -1})
 
     res.render('products', Response.success(result))
 
