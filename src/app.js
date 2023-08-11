@@ -68,16 +68,17 @@ app.get('/', async (req, res) => {
 
     const filter = {}
 
-    filter[query] = parseInt(value) || value
+    if (query && value) filter[query] = parseInt(value) || value
 
     const options = {
         limit: parseInt(limit) || 10,
-        page: parseInt(page) || 1
+        page: parseInt(page) || 1,
+        sort: { price: sort }
     }
 
     const result = await ProductModel.paginate(filter, options)
 
-    res.render('index', Response.success(result))
+    res.render('products', Response.success(result))
 
 })
 
@@ -101,10 +102,11 @@ app.get('/products', async (req, res) => {
 
     const options = {
         limit: parseInt(limit) || 10,
-        page: parseInt(page) || 1
+        page: parseInt(page) || 1,
+        sort: { price: sort }
     }
 
-    const result = await ProductModel.paginate(filter, options).sort({price: -1})
+    const result = await ProductModel.paginate(filter, options)
 
     res.render('products', Response.success(result))
 
