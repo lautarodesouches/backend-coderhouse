@@ -1,3 +1,10 @@
+<section>
+    <h2>Bienvenido {{user.first_name}}</h2>
+    <p class='my-1'>Apellido: {{user.last_name}}</p>
+    <p class='my-1'>Email: {{user.email}}</p>
+    <p class='my-1'>Edad: {{user.age}}</p>
+    <button class='mt-4 btn btn-danger' id='logout'>Logout</button>
+</section>
 <section class='mt-4 row justify-content-around align-items-end text-center'>
     <div class='col-12 col-md-4'>
         <h1 class='mt-5 text-center'>Productos</h1>
@@ -41,7 +48,7 @@
     </form>
 </section>
 <section class='mt-5 row justify-content-around align-items-stretch' id='products'>
-    {{#each payload}}
+    {{#each result}}
         <article class='col-12 col-md-3 m-4 py-5 border rounded text-center bg-light' id={{_id}}>
             <h2 class='h4'>{{title}}</h2>
             <h3 class='h5'>{{description}}</h3>
@@ -63,6 +70,26 @@
 
 </aside>
 <script>
+
+    const logout = document.getElementById('logout')
+
+    logout.onclick = () => {
+        
+        async function logout(){
+            
+            const response = await fetch('/api/auth/logout', {
+                method: 'POST'
+            })
+            
+            const data = await response.json()
+            
+            window.location.href = '/'
+
+        }
+
+        logout()
+
+    }
 
     const addButtons = document.getElementsByName('addProduct')
 
