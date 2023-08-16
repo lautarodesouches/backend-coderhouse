@@ -1,5 +1,4 @@
 import { Router } from 'express'
-import Response from '../class/response.class.js'
 import { ProductModel } from '../dao/mongoManager/models/product.model.js'
 import { UserModel } from '../dao/mongoManager/models/user.model.js'
 
@@ -27,11 +26,9 @@ router.get('/register', (req, res) => {
 
 router.get('/profile', auth, async (req, res) => {
 
-    const { user } = req.session.user
+    const user = await UserModel.findOne({ user: req.session.user })
 
-    const data = await UserModel.findOne({ user })
-
-    res.render('profile', data)
+    res.render('profile', user)
 
 })
 
@@ -59,10 +56,8 @@ router.get('/products', auth, async (req, res) => {
 
     const info = {
         user,
-        result
+        docs: result.docs
     }
-
-    console.log(info);
 
     res.render('products', info)
 

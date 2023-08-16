@@ -1,8 +1,8 @@
 <section>
-    <h2>Bienvenido {{user.first_name}}</h2>
-    <p class='my-1'>Apellido: {{user.last_name}}</p>
-    <p class='my-1'>Email: {{user.email}}</p>
-    <p class='my-1'>Edad: {{user.age}}</p>
+    <h2>Bienvenido {{user._doc.first_name}}</h2>
+    <p class='my-1'>Apellido: {{user._doc.last_name}}</p>
+    <p class='my-1'>Email: {{user._doc.email}}</p>
+    <p class='my-1'>Edad: {{user._doc.age}}</p>
     <button class='mt-4 btn btn-danger' id='logout'>Logout</button>
 </section>
 <section class='mt-4 row justify-content-around align-items-end text-center'>
@@ -48,19 +48,19 @@
     </form>
 </section>
 <section class='mt-5 row justify-content-around align-items-stretch' id='products'>
-    {{#each result}}
-        <article class='col-12 col-md-3 m-4 py-5 border rounded text-center bg-light' id={{_id}}>
-            <h2 class='h4'>{{title}}</h2>
-            <h3 class='h5'>{{description}}</h3>
+    {{#each docs}}
+        <article class='col-12 col-md-3 m-4 py-5 border rounded text-center bg-light' id={{this._doc._id}}>
+            <h2 class='h4'>{{this._doc.title}}</h2>
+            <h3 class='h5'>{{this._doc.description}}</h3>
             <div class='row mt-5'>
-                <p class='col-6'>{{category}}</p>
-                <p class='col-6'>Codigo: {{code}}</p>
-                <p class='col-6'>${{price}}</p>
-                <p class='col-6'>{{stock}} Disponibles</p>
+                <p class='col-6'>{{this._doc.category}}</p>
+                <p class='col-6'>Codigo: {{this._doc.code}}</p>
+                <p class='col-6'>${{this._doc.price}}</p>
+                <p class='col-6'>{{this._doc.stock}} Disponibles</p>
             </div>
             <div class='row mt-5 justify-content-center'>
                 <div class='col-6'>
-                    <button class='btn btn-primary' name='addProduct' data-product-id='{{_id}}'>Agregar</button>
+                    <button class='btn btn-primary' name='addProduct' data-product-id='{{this._doc._id}}'>Agregar</button>
                 </div>
             </div>
         </article>
