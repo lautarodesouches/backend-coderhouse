@@ -34,7 +34,7 @@ router.get('/profile', auth, async (req, res) => {
 
 router.get('/products', auth, async (req, res) => {
 
-    const user = await UserModel.findOne({ user: req.session.user })
+    const user = await UserModel.findOne({ email: req.session.email })
 
     // -------------------------------------------------
 

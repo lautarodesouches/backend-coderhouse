@@ -25,8 +25,8 @@ import ProductManager from './dao/fileManager/product.manager.js'
 import { MessagesModel } from './dao/mongoManager/models/message.model.js'
 import { ProductModel } from './dao/mongoManager/models/product.model.js'
 import { CartModel } from './dao/mongoManager/models/cart.model.js'
-//
-import Response from './class/response.class.js'
+import initializePassport from './config/index.js'
+import passport from 'passport'
 
 const MONGO_URL = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.vkjgmee.mongodb.net/?retryWrites=true&w=majority`
 const MONGO_DB = 'ecommerce'
@@ -86,6 +86,12 @@ try {
 app.engine('handlebars', handlebars.engine())
 app.set('views', __dirname + '/views')
 app.set('view engine', 'handlebars')
+
+// ----------------------------------------------------------------------------------------- PASSPORT
+
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
 
 // ----------------------------------------------------------------------------------------- ROUTERS
 

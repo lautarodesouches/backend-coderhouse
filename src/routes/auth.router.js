@@ -1,5 +1,7 @@
 import { Router } from 'express'
 import { UserModel } from '../dao/mongoManager/models/user.model.js'
+import { createHash, isPasswordValid } from '../utils/index.js'
+import passport from 'passport'
 
 // -----------------------------------------------------------------------------------------
 
@@ -7,38 +9,33 @@ const router = Router()
 
 // -----------------------------------------------------------------------------------------
 
-router.post('/login', async (req, res) => {
+router.post(
+    '/login',
+    passport.authenticate('login', '/login'),
+    async (req, res) => {
 
-    const { email, password } = req.body
+        if (!req.user) return res.status(400).send('Invalid credentials')
 
-    const user = await UserModel.findOne({ email, password })
+        req.session.email = req.user.email
 
-    if (!user) return res.redirect('/')
+        return res.redirect('/products')
 
-    req.session.email = email
-
-    return res.redirect('/products')
-
-})
+    }
+)
 
 router.post('/logout', (req, res) => {
     req.session.destroy(err => {
-        if(err) return res.json({status: 'Logout ERROR', body: err})
+        if (err) return res.json({ status: 'Logout ERROR', body: err })
     })
 
-    return res.json({status: 'Logout Ok', body: {}})
+    return res.json({ status: 'Logout Ok', body: {} })
 })
 
-router.post('/register', (req, res) => {
-
-    const data = req.body
-
-    data.role = 'user'
-
-    UserModel.create(data)
-
-    return res.redirect('/')
-})
+router.post(
+    '/register',
+    passport.authenticate('register', { failureRedirect: '/register' }),
+    async (req, res) => res.redirect('/')
+)
 
 router.get('/test', (req, res) => {
 
