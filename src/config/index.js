@@ -3,16 +3,7 @@ import passportLocal from 'passport-local'
 import { UserModel } from '../dao/mongoManager/models/user.model.js'
 import { createHash, isPasswordValid } from '../utils/index.js'
 import GitHubStrategy from 'passport-github2'
-
-/*
-
-App ID: 384714
-
-Client ID: Iv1.e49f438f66dc04f8
-
-Secret: 807ee9f6462f80747187bb9efaf635432cbadde1
-
-*/
+import { CLIENT_SECRET } from '../constants/index.js'
 
 const LocalStrategy = passportLocal.Strategy
 
@@ -83,7 +74,7 @@ const initializePassport = () => {
     passport.use('github', new GitHubStrategy(
         {
             clientID: 'Iv1.e49f438f66dc04f8',
-            clientSecret: '807ee9f6462f80747187bb9efaf635432cbadde1',
+            clientSecret: CLIENT_SECRET,
             callbackURL: 'http://localhost:8080/api/auth/github-callback'
         },
         async (accessToken, refreshToken, profile, done) => {
