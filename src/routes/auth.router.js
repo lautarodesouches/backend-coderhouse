@@ -1,6 +1,4 @@
 import { Router } from 'express'
-import { UserModel } from '../dao/mongoManager/models/user.model.js'
-import { createHash, isPasswordValid } from '../utils/index.js'
 import passport from 'passport'
 
 // -----------------------------------------------------------------------------------------
@@ -20,6 +18,23 @@ router.post(
 
         return res.redirect('/products')
 
+    }
+)
+
+router.get(
+    '/login-github',
+    passport.authenticate('github', { scope: ['user:email'] }),
+    async (req, res) => { }
+)
+
+router.get(
+    '/github-callback',
+    passport.authenticate('github', { failureRedirect: '/' }),
+    async (req, res) => {
+        console.log('Callback: ', req.user)
+        req.session.email = req.user.email
+        console.log(req.session);
+        res.redirect('/profile')
     }
 )
 
