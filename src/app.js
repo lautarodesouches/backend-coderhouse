@@ -28,6 +28,8 @@ import { CartModel } from './dao/mongoManager/models/cart.model.js'
 import initializePassport from './config/index.js'
 import passport from 'passport'
 
+import { UserModel } from './dao/mongoManager/models/user.model.js'
+
 const MONGO_URL = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.vkjgmee.mongodb.net/?retryWrites=true&w=majority`
 const MONGO_DB = 'ecommerce'
 
@@ -92,6 +94,18 @@ app.set('view engine', 'handlebars')
 initializePassport()
 app.use(passport.initialize())
 app.use(passport.session())
+
+app.get(
+    '/api/sessions/current',
+    passport.authenticate('jwt'),
+    async (req, res) => {
+
+        const user = await UserModel.findOne({ email: req.user.email })
+
+        res.render('profile', user)
+
+    }
+)
 
 // ----------------------------------------------------------------------------------------- ROUTERS
 

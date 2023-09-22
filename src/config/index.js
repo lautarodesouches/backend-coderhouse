@@ -1,11 +1,13 @@
 import passport from 'passport'
 import passportLocal from 'passport-local'
 import { UserModel } from '../dao/mongoManager/models/user.model.js'
-import { createHash, isPasswordValid } from '../utils/index.js'
+import { createHash, isPasswordValid, generateToken, extractCookie } from '../utils/index.js'
 import GitHubStrategy from 'passport-github2'
-import { CLIENT_SECRET } from '../constants/index.js'
+import passportJWT, { ExtractJwt } from 'passport-jwt'
+import { CLIENT_SECRET, JWT_SECRET } from '../constants/index.js'
 
 const LocalStrategy = passportLocal.Strategy
+const JWTStrategy = passportJWT.Strategy
 
 const initializePassport = () => {
 
@@ -78,28 +80,29 @@ const initializePassport = () => {
             callbackURL: 'http://localhost:8080/api/auth/github-callback'
         },
         async (accessToken, refreshToken, profile, done) => {
-            console.log('profile', profile)
 
             try {
-                const user = await UserModel.findOne({ email: profile._json.email })
 
-                if (user) {
-                    console.log('Usuario ya existente ' + user);
-                    return done(null, user)
+                let user = await UserModel.findOne({ email: profile._json.email })
+
+                if (!user) {
+
+                    const newUser = {
+                        first_name: profile._json.name,
+                        last_name: '',
+                        email: profile._json.email,
+                        password: '',
+                        role: 'user',
+                        age: 0
+                    }
+
+                    user = await UserModel.create(newUser)
+
                 }
 
-                const newUser = {
-                    first_name: profile._json.name,
-                    last_name: '',
-                    email: profile._json.email,
-                    password: '',
-                    role: 'user',
-                    age: 0
-                }
+                user.token = generateToken(user)
 
-                const result = await UserModel.create(newUser)
-
-                return done(null, result)
+                return done(null, user)
 
             } catch (error) {
 
@@ -110,19 +113,33 @@ const initializePassport = () => {
         }
     ))
 
+    passport.use('jwt', new JWTStrategy(
+        {
+            jwtFromRequest: ExtractJwt.fromExtractors([extractCookie]),
+            secretOrKey: JWT_SECRET
+        },
+        (jwt_payload, done) => {
+            const { user } = jwt_payload
+            done(null, user)
+        }
+    ))
+
+    // -----------------------------
+    passport.use('current', new JWTStrategy(
+        {
+            jwtFromRequest: ExtractJwt.fromExtractors([extractCookie]),
+            secretOrKey: JWT_SECRET
+        },
+        (jwt_payload, done) => {
+            const { user } = jwt_payload
+            done(null, user)
+        }
+    ))
+
 }
 
-passport.serializeUser((user, done) => {
-    console.log(user);
-    done(null, user._id)
-})
+passport.serializeUser((user, done) => done(null, user._id))
 
-passport.deserializeUser(async (id, done) => {
-
-    const user = await UserModel.findById(id)
-
-    done(null, user)
-
-})
+passport.deserializeUser(async (id, done) => done(null, await UserModel.findById(id)))
 
 export default initializePassport

@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import passport from 'passport'
+import { JWT_COOKIE_NAME } from '../constants/index.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -31,10 +32,9 @@ router.get(
     '/github-callback',
     passport.authenticate('github', { failureRedirect: '/' }),
     async (req, res) => {
-        console.log('Callback: ', req.user)
-        req.session.email = req.user.email
-        console.log(req.session);
-        res.redirect('/profile')
+
+        res.cookie(JWT_COOKIE_NAME, req.user.token).redirect('/profile')
+
     }
 )
 
