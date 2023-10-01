@@ -7,4 +7,4 @@ const messagesSchema = new mongoose.Schema({
     content: { type: String, required: true },
 })
 
-export const MessagesModel = mongoose.model(messagesCollection, messagesSchema)
+export default mongoose.model(messagesCollection, messagesSchema)

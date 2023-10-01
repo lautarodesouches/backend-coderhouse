@@ -1,6 +1,5 @@
 import { promises } from 'fs'
-import Manager from './manager.js'
-import Cart from '../../class/cart.class.js'
+import Manager from '../manager/index.js'
 
 export default class CartManager extends Manager {
 

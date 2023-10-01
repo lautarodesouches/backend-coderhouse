@@ -1,11 +1,11 @@
 import { Router } from 'express'
-import { MessagesModel } from '../dao/mongoManager/models/message.model.js'
+import { MessageModel } from '../../dao/mongo/index.js'
 
 const router = new Router()
 
 router.get('/', async (req, res) => {
 
-    const data = await MessagesModel.find()
+    const data = await MessageModel.find()
 
     const reverse = data.reverse()
 

@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import Response from '../class/response.class.js'
-import { ProductModel } from '../dao/mongoManager/models/product.model.js'
 import { ObjectId } from 'mongodb'
+import { ProductModel } from '../../dao/mongo/index.js'
+import { ResponseClass } from '../../class/index.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
 
     const products = await ProductModel.paginate(filter, options)
 
-    res.status(200).send(Response.success(products))
+    res.status(200).send(ResponseClass.success(products))
 
 })
 
@@ -36,11 +36,11 @@ router.get('/:pid', async (req, res) => {
 
         if (!product) throw new Error('Producto no encontrado')
 
-        res.status(200).send(Response.success(product))
+        res.status(200).send(ResponseClass.success(product))
 
     } catch (error) {
 
-        res.status(404).send(Response.e(error.message))
+        res.status(404).send(ResponseClass.e(error.message))
 
     }
 
@@ -52,11 +52,11 @@ router.post('/', async (req, res) => {
 
         await ProductModel.create(req.body)
 
-        res.status(201).send(Response.succe())
+        res.status(201).send(ResponseClass.succe())
 
     } catch (error) {
 
-        res.status(500).send(Response.error(error.message))
+        res.status(500).send(ResponseClass.error(error.message))
 
     }
 
@@ -83,11 +83,11 @@ router.put('/:pid', async (req, res) => {
 
         await ProductModel.updateOne(filter, update)
 
-        res.status(201).send(Response.success())
+        res.status(201).send(ResponseClass.success())
 
     } catch (error) {
 
-        res.status(500).send(Response.error(error.message))
+        res.status(500).send(ResponseClass.error(error.message))
 
     }
 
@@ -101,11 +101,11 @@ router.delete('/:pid', async (req, res) => {
 
         await ProductModel.deleteOne(filter)
 
-        res.status(204).send(Response.success())
+        res.status(204).send(ResponseClass.success())
 
     } catch (error) {
 
-        res.status(500).send(Response.error(error.message))
+        res.status(500).send(ResponseClass.error(error.message))
 
     }
 

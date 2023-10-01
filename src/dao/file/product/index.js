@@ -1,5 +1,5 @@
-import Product from '../../class/product.class.js'
-import Manager from './manager.js'
+import { ProductClass } from '../../../class/index.js'
+import Manager from '../manager/index.js'
 
 export default class ProductManager extends Manager {
 
@@ -13,7 +13,7 @@ export default class ProductManager extends Manager {
 
         await this.getData()
 
-        const productToAdd = Object.assign(new Product(), product)
+        const productToAdd = Object.assign(new ProductClass(), product)
 
         if (!productToAdd.hasAllValuesSet()) throw new Error(`Los campos son obligatorios`)
 

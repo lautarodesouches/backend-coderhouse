@@ -1,8 +1,7 @@
 import { Router } from 'express'
-import Response from '../class/response.class.js'
-import { CartModel } from '../dao/mongoManager/models/cart.model.js'
-import { ProductModel } from '../dao/mongoManager/models/product.model.js'
 import { ObjectId } from 'mongodb'
+import { ResponseClass } from '../../class/index.js'
+import { CartModel, ProductModel } from '../../dao/mongo/index.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -18,7 +17,7 @@ router.get('/:cid', async (req, res) => {
 
     if (!cart) throw new Error('Carrito no encontrado')
 
-    res.status(200).send(Response.success(cart))
+    res.status(200).send(ResponseClass.success(cart))
 
 })
 
@@ -26,7 +25,7 @@ router.post('/', async (req, res) => {
 
     const cart = await CartModel.create({ products: [] })
 
-    res.status(201).send(Response.success(cart))
+    res.status(201).send(ResponseClass.success(cart))
 
 })
 
@@ -76,11 +75,11 @@ router.post('/:cid/product/:pid', async (req, res) => {
 
         await CartModel.updateOne(filter, update)
 
-        res.status(201).send(Response.success())
+        res.status(201).send(ResponseClass.success())
 
     } catch (error) {
 
-        res.status(500).send(Response.error(error.message))
+        res.status(500).send(ResponseClass.error(error.message))
 
     }
 
@@ -107,11 +106,11 @@ router.delete('/:cid/products/:pid', async (req, res) => {
             }
         )
 
-        res.status(201).send(Response.success())
+        res.status(201).send(ResponseClass.success())
 
     } catch (error) {
 
-        res.status(500).send(Response.error(error.message))
+        res.status(500).send(ResponseClass.error(error.message))
 
     }
 
@@ -135,11 +134,11 @@ router.delete('/:cid/', async (req, res) => {
             }
         )
 
-        res.status(201).send(Response.success())
+        res.status(201).send(ResponseClass.success())
 
     } catch (error) {
 
-        res.status(500).send(Response.error(error.message))
+        res.status(500).send(ResponseClass.error(error.message))
 
     }
 
@@ -163,11 +162,11 @@ router.put('/:cid/', async (req, res) => {
             }
         )
 
-        res.status(201).send(Response.success())
+        res.status(201).send(ResponseClass.success())
 
     } catch (error) {
 
-        res.status(500).send(Response.error(error.message))
+        res.status(500).send(ResponseClass.error(error.message))
 
     }
 
@@ -192,11 +191,11 @@ router.put('/:cid/products/:pid/', async (req, res) => {
             }
         )
 
-        res.status(201).send(Response.success())
+        res.status(201).send(ResponseClass.success())
 
     } catch (error) {
 
-        res.status(500).send(Response.error(error.message))
+        res.status(500).send(ResponseClass.error(error.message))
 
     }
 

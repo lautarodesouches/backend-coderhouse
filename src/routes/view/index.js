@@ -1,8 +1,7 @@
 import { Router } from 'express'
-import { ProductModel } from '../dao/mongoManager/models/product.model.js'
-import { UserModel } from '../dao/mongoManager/models/user.model.js'
 import passport from 'passport'
-import { JWT_COOKIE_NAME } from '../constants/index.js'
+import { ProductModel, UserModel } from '../../dao/mongo/index.js'
+import config from '../../config/index.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -11,7 +10,7 @@ const router = Router()
 // -----------------------------------------------------------------------------------------
 
 function auth(req, res, next) {
-    return ((req.session?.email || req.cookies[JWT_COOKIE_NAME]) ? next() : res.status(401).send('Auth error'))
+    return ((req.session?.email || req.cookies[config.jwtCookieName]) ? next() : res.status(401).send('Auth error'))
 }
 
 router.get('/', (req, res) => {

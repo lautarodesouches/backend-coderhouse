@@ -7,8 +7,8 @@ export const isPasswordValid = (user, password) => bycrypt.compareSync(password,
 // ----------------
 
 import jsw from 'jsonwebtoken'
-import { JWT_COOKIE_NAME, JWT_SECRET } from '../constants/index.js'
+import config from '../config/index.js'
 
-export const generateToken = user => jsw.sign({ user }, JWT_SECRET, { expiresIn: '24h' })
+export const generateToken = user => jsw.sign({ user }, config.jwtSecret, { expiresIn: '24h' })
 
-export const extractCookie = req => (req && req.cookies) && req.cookies[JWT_COOKIE_NAME]
+export const extractCookie = req => (req && req.cookies) && req.cookies[config.jwtCookieName]

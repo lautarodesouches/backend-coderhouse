@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import passport from 'passport'
-import { JWT_COOKIE_NAME } from '../constants/index.js'
+import config from '../../config/index.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -33,7 +33,7 @@ router.get(
     passport.authenticate('github', { failureRedirect: '/' }),
     async (req, res) => {
 
-        res.cookie(JWT_COOKIE_NAME, req.user.token).redirect('/profile')
+        res.cookie(config.jwtCookieName, req.user.token).redirect('/profile')
 
     }
 )

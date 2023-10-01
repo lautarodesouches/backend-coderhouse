@@ -1,35 +1,23 @@
 import express from 'express'
-import mongoose from 'mongoose'
-import handlebars from 'express-handlebars'
-import cookieParser from 'cookie-parser'
 import session from 'express-session'
+import handlebars from 'express-handlebars'
+import mongoose from 'mongoose'
+import cookieParser from 'cookie-parser'
 import FileStore from 'session-file-store'
 import MongoStore from 'connect-mongo'
-import { Server } from 'socket.io'
+import passport from 'passport'
 import bodyParser from 'body-parser'
 //
+import { Server } from 'socket.io'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 //
-import { DB_PASSWORD, DB_USER } from './constants/index.js'
+import config from './config/index.js'
+import initializePassport from './config/passport/index.js'
 //
-import CartRouter from './routes/cart.router.js'
-import ChatRouter from './routes/chat.router.js'
-import UsersRouter from './routes/users.router.js'
-import ProductRouter from './routes/product.router.js'
-import AuthRouter from './routes/auth.router.js'
-import ViewsRouter from './routes/views.router.js'
-//
-import ProductManager from './dao/fileManager/product.manager.js'
-//
-import { MessagesModel } from './dao/mongoManager/models/message.model.js'
-import { ProductModel } from './dao/mongoManager/models/product.model.js'
-import { CartModel } from './dao/mongoManager/models/cart.model.js'
-import initializePassport from './config/index.js'
-import passport from 'passport'
-
-const MONGO_URL = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.vkjgmee.mongodb.net/?retryWrites=true&w=majority`
-const MONGO_DB = 'ecommerce'
+import { ProductManager } from './dao/file/index.js'
+import { MessageModel, CartModel, ProductModel } from './dao/mongo/index.js'
+import { AuthRoutes, CartRoutes, ChatRoutes, ProductRoutes, UserRoutes, ViewRoutes } from './routes/index.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -57,8 +45,8 @@ app.use(cookieParser('CoderS3cR3tC0D3'))
 app.use(session({
     //store: new fileStorage({ path: './sessions', ttl: 100, retries: 0 }),
     store: MongoStore.create({
-        mongoUrl: MONGO_URL,
-        dbName: MONGO_DB,
+        mongoUrl: config.mongoUrl,
+        dbName: config.mongoDb,
         ttl: 100
     }),
     secret: 'secretCoder',
@@ -70,7 +58,7 @@ app.use(session({
 
 try {
 
-    await mongoose.connect(MONGO_URL, { dbName: MONGO_DB })
+    await mongoose.connect(config.mongoUrl, { dbName: config.mongoDb })
 
     console.log('\n--- Connected to database ---')
 
@@ -95,12 +83,12 @@ app.use(passport.session())
 
 // ----------------------------------------------------------------------------------------- ROUTERS
 
-app.use('/', ViewsRouter)
-app.use('/api/auth', AuthRouter)
-app.use('/api/products', ProductRouter)
-app.use('/api/carts', CartRouter)
-app.use('/api/users', UsersRouter)
-app.use('/chat', ChatRouter)
+app.use('/', ViewRoutes)
+app.use('/api/auth', AuthRoutes)
+app.use('/api/products', ProductRoutes)
+app.use('/api/carts', CartRoutes)
+app.use('/api/users', UserRoutes)
+app.use('/chat', ChatRoutes)
 
 // ----------------------------------------------------------------------------------------- 
 
@@ -133,10 +121,8 @@ app.get('/carts/:cid', async (req, res) => {
 
 // ----------------------------------------------------------------------------------------- SOCKET
 
-const PORT = 8080
-
-const httpServer = app.listen(PORT, () => {
-    console.log(`\n--- Server running in port ${PORT} --> http://localhost:${PORT}/`)
+const httpServer = app.listen(config.port, () => {
+    console.log(`\n--- Server running in port ${config.port} --> http://localhost:${config.port}/`)
 })
 
 const io = new Server(httpServer)
@@ -185,9 +171,9 @@ io.on('connection', socket => {
 
     socket.on('add-message', async message => {
 
-        await MessagesModel.create(message)
+        await MessageModel.create(message)
 
-        const res = await MessagesModel.find()
+        const res = await MessageModel.find()
 
         const chat = res.reverse()
 
