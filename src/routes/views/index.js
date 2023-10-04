@@ -1,6 +1,9 @@
 import { Router } from 'express'
 import passport from 'passport'
-import { ProductModel, UserModel } from '../../dao/mongo/index.js'
+
+// -----------------------------------------------------------------------------------------
+
+import { ProductModel, UserModel } from '../../dao/mongo/models/index.js'
 import config from '../../config/index.js'
 
 // -----------------------------------------------------------------------------------------
@@ -12,6 +15,8 @@ const router = Router()
 function auth(req, res, next) {
     return ((req.session?.email || req.cookies[config.jwtCookieName]) ? next() : res.status(401).send('Auth error'))
 }
+
+// -----------------------------------------------------------------------------------------
 
 router.get('/', (req, res) => {
 

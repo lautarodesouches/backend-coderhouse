@@ -1,13 +1,20 @@
-import config from '../index.js'
-import passport from 'passport'
-import passportLocal from 'passport-local'
-import GitHubStrategy from 'passport-github2'
-import { UserModel } from '../../dao/mongo/index.js'
 import passportJWT, { ExtractJwt } from 'passport-jwt'
+import GitHubStrategy from 'passport-github2'
+import passportLocal from 'passport-local'
+import passport from 'passport'
+
+// -----------------------------------------------------------------------------------------
+
+import config from '../index.js'
+import { UserModel } from '../../dao/mongo/models/index.js'
 import { createHash, isPasswordValid, generateToken, extractCookie } from '../../utils/index.js'
+
+// -----------------------------------------------------------------------------------------
 
 const LocalStrategy = passportLocal.Strategy
 const JWTStrategy = passportJWT.Strategy
+
+// -----------------------------------------------------------------------------------------
 
 const initializePassport = () => {
 
@@ -124,7 +131,6 @@ const initializePassport = () => {
         }
     ))
 
-    // -----------------------------
     passport.use('current', new JWTStrategy(
         {
             jwtFromRequest: ExtractJwt.fromExtractors([extractCookie]),
@@ -138,8 +144,12 @@ const initializePassport = () => {
 
 }
 
+// -----------------------------------------------------------------------------------------
+
 passport.serializeUser((user, done) => done(null, user._id))
 
 passport.deserializeUser(async (id, done) => done(null, await UserModel.findById(id)))
+
+// -----------------------------------------------------------------------------------------
 
 export default initializePassport

@@ -7,16 +7,22 @@ import FileStore from 'session-file-store'
 import MongoStore from 'connect-mongo'
 import passport from 'passport'
 import bodyParser from 'body-parser'
-//
+
+// -----------------------------------------------------------------------------------------
+
 import { Server } from 'socket.io'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
-//
+
+// -----------------------------------------------------------------------------------------
+
 import config from './config/index.js'
 import initializePassport from './config/passport/index.js'
-//
+
+// -----------------------------------------------------------------------------------------
+
 import { ProductManager } from './dao/file/index.js'
-import { MessageModel, CartModel, ProductModel } from './dao/mongo/index.js'
+import { MessageModel, CartModel, ProductModel } from './dao/mongo/models/index.js'
 import { AuthRoutes, CartRoutes, ChatRoutes, ProductRoutes, UserRoutes, ViewRoutes } from './routes/index.js'
 
 // -----------------------------------------------------------------------------------------

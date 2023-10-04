@@ -1,27 +1,27 @@
-import { Router } from 'express'
-import { ResponseClass } from '../../class/index.js'
-import { UserModel } from '../../dao/mongo/index.js'
+import { Router } from "express"
 
 // -----------------------------------------------------------------------------------------
 
-const router = Router()
+import { createUser, deletedUser, getUserByEmail, getUserById, getUsers, updatedUserById, } from "../../controllers/user/index.js"
 
 // -----------------------------------------------------------------------------------------
 
-router.get('/', async (req, res) => {
+const router = Router();
 
-    try {
+// -----------------------------------------------------------------------------------------
 
-        let users = await UserModel.find()
+router.post("/", createUser);
 
-        res.send(ResponseClass.success(users))
+router.get("/", getUsers);
 
-    } catch (error) {
+router.get("/:email", getUserByEmail);
 
-        res.send(ResponseClass.error())
+router.get("/id/:id", getUserById);
 
-    }
+router.put("/users/:id", updatedUserById);
 
-})
+router.delete("/:id", deletedUser);
 
-export default router
+// -----------------------------------------------------------------------------------------
+
+export default router;

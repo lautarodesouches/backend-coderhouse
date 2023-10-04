@@ -4,35 +4,35 @@
     </div>
     <form class='col-12 col-md-8 row align-items-end justify-content-around' id='form' method='get'>
         <div class='col-2'>
-            <label class='w-100' for="limit">Limit</label>
-            <input class='w-100 rounded border mt-1 px-2' type="number"  name='limit' placeholder='10'>
+            <label class='w-100' for='limit'>Limit</label>
+            <input class='w-100 rounded border mt-1 px-2' type='number'  name='limit' placeholder='10'>
         </div>
         <div class='col-2'>
-            <label class='w-100' for="page">Page</label>
-            <input class='w-100 rounded border mt-1 px-2' type="number" name='page' placeholder='1'>
+            <label class='w-100' for='page'>Page</label>
+            <input class='w-100 rounded border mt-1 px-2' type='number' name='page' placeholder='1'>
         </div>
         <div class='col-2'>
-            <label class='w-100' for="query">Query</label>
+            <label class='w-100' for='query'>Query</label>
             <select class='w-100 rounded border mt-1 px-2' name='query'>
-                <option value="title">Title</option>
-                <option value="description">Description</option>
-                <option value="price">Price</option>
-                <option value="thumnail">Thumnail</option>
-                <option value="code">Code</option>
-                <option value="stock">Stock</option>
-                <option value="status">Status</option>
-                <option value="category">Category</option>
+                <option value='title'>Title</option>
+                <option value='description'>Description</option>
+                <option value='price'>Price</option>
+                <option value='thumnail'>Thumnail</option>
+                <option value='code'>Code</option>
+                <option value='stock'>Stock</option>
+                <option value='status'>Status</option>
+                <option value='category'>Category</option>
             </select>
         </div>
         <div class='col-2'>
-            <label class='w-100' for="value">Value</label>
-            <input class='w-100 rounded border mt-1 px-2' type="text"  name='value' placeholder='Notebooks'>
+            <label class='w-100' for='value'>Value</label>
+            <input class='w-100 rounded border mt-1 px-2' type='text'  name='value' placeholder='Notebooks'>
         </div>
         <div class='col-2'>
-            <label class='w-100' for="sort">Sort price</label>
+            <label class='w-100' for='sort'>Sort price</label>
             <select class='w-100 rounded border mt-1 px-2' name='sort'>
-              <option value="1">Ascendente</option>
-              <option value="-1">Descendente</option>
+              <option value='1'>Ascendente</option>
+              <option value='-1'>Descendente</option>
             </select>
         </div>
         <div class='col-2'>
@@ -80,8 +80,8 @@
 
     addButtons.forEach(button => {
         const productId = button.dataset.productId
-        button.addEventListener('click', () => handleAddProduct(productId));
-    });
+        button.addEventListener('click', () => handleAddProduct(productId))
+    })
 
     async function handleAddProduct(id){
 
@@ -96,7 +96,7 @@
 
         const data = await response.json()
 
-        if(data.status === "Success") {
+        if(data.status === 'Success') {
 
             const div = document.createElement('div')
 

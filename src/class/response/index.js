@@ -10,7 +10,7 @@ class Response {
         delete response.docs
 
         for (const key in response) {
-            this[key] = response[key];
+            this[key] = response[key]
         }
     }
 

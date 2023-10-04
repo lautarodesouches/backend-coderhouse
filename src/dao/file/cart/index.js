@@ -1,5 +1,6 @@
 import { promises } from 'fs'
 import Manager from '../manager/index.js'
+import Cart from '../../../class/cart/index.js'
 
 export default class CartManager extends Manager {
 
@@ -13,7 +14,7 @@ export default class CartManager extends Manager {
 
         await this.getData()
 
-        console.log("ID ------------ " + this.id);
+        console.log('ID ------------ ' + this.id)
 
         const cart = new Cart(this.id)
 

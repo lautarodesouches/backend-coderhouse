@@ -1,19 +1,32 @@
-import mongoose from 'mongoose'
-import mongoosePaginate from 'mongoose-paginate-v2'
+import { ProductModel } from '../models/index.js'
 
-const productCollection = 'products'
+export default class Product {
 
-const productScheme = new mongoose.Schema({
-    title: { type: String, required: true, index: true },
-    code: { type: String, required: true, index: true },
-    description: { type: String, required: true },
-    price: { type: Number, required: true },
-    thumnail: { type: Array, required: true },
-    stock: { type: Number, required: true },
-    status: { type: Boolean, required: true },
-    category: { type: String, required: true },
-})
+    getProducts = async (limit) => {
 
-productScheme.plugin(mongoosePaginate)
+        if (!limit) return ProductModel.find()
 
-export default mongoose.model(productCollection, productScheme)
+        const products = await ProductModel.find()
+
+        return products.slice(0, limit)
+
+    }
+
+    addProducts = async (data) => await ProductModel.create(data)
+
+    getProductById = async (id) => await ProductModel.findById(id)
+
+    updatedProductById = async (id, updatedProduct) => {
+
+        const update = {
+            $set: updatedProduct,
+        }
+
+        return await ProductModel.findByIdAndUpdate(id, update, {
+            new: true,
+        })
+    }
+
+    deleteProduct = async (id) => await ProductModel.findByIdAndDelete(id)
+
+}

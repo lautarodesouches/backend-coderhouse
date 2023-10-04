@@ -1,5 +1,8 @@
 import { Router } from 'express'
 import passport from 'passport'
+
+// -----------------------------------------------------------------------------------------
+
 import config from '../../config/index.js'
 
 // -----------------------------------------------------------------------------------------
@@ -51,21 +54,6 @@ router.post(
     passport.authenticate('register', { failureRedirect: '/register' }),
     async (req, res) => res.redirect('/')
 )
-
-router.get('/test', (req, res) => {
-
-    if (req.session.user) return res.send('Already logged')
-
-    const { username } = req.query
-
-    if (!username) return res.send('Need a username')
-
-    req.session.user = username
-
-    return res.send('Successful login')
-
-})
-
 
 // -----------------------------------------------------------------------------------------
 
