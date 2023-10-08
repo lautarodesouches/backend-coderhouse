@@ -23,12 +23,11 @@ import initializePassport from './config/passport/index.js'
 
 import { ProductManager } from './dao/file/index.js'
 import { MessageModel, CartModel, ProductModel } from './dao/mongo/models/index.js'
-import { AuthRoutes, CartRoutes, ChatRoutes, ProductRoutes, UserRoutes, ViewRoutes } from './routes/index.js'
+import { AuthRoutes, CartRoutes, ChatRoutes, ProductRoutes, UserRoutes, ViewRoutes, LoggerRoutes } from './routes/index.js'
 import compression from 'express-compression'
 import errorHandler from './middleware/index.js'
-import CustomError from './class/error/index.js'
-import EErrors from './class/error/types.js'
 import { generateMockProducts } from './utils/index.js'
+import { addLogger } from './utils/logger.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -70,6 +69,8 @@ app.use(session({
     saveUninitialized: true
 }))
 
+app.use(addLogger)
+
 // ----------------------------------------------------------------------------------------- MOGOOSE
 
 try {
@@ -101,6 +102,7 @@ app.use(passport.session())
 // ----------------------------------------------------------------------------------------- ROUTERS
 
 app.use('/', ViewRoutes)
+app.use('/loggertest', LoggerRoutes)
 app.use('/chat', ChatRoutes)
 app.use('/api/auth', AuthRoutes)
 app.use('/api/users', UserRoutes)
