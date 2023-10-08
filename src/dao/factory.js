@@ -12,7 +12,7 @@ switch (config.persistence) {
         mongoose.connect(config.mongoUrl, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            dbName: config.dbName,
+            dbName: config.mongoDb,
         })
 
         const { default: ProductMongo } = await import('./mongo/product/index.js')

@@ -24,11 +24,17 @@ import initializePassport from './config/passport/index.js'
 import { ProductManager } from './dao/file/index.js'
 import { MessageModel, CartModel, ProductModel } from './dao/mongo/models/index.js'
 import { AuthRoutes, CartRoutes, ChatRoutes, ProductRoutes, UserRoutes, ViewRoutes } from './routes/index.js'
+import compression from 'express-compression'
+import errorHandler from './middleware/index.js'
+import CustomError from './class/error/index.js'
+import EErrors from './class/error/types.js'
+import { generateMockProducts } from './utils/index.js'
 
 // -----------------------------------------------------------------------------------------
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
+
 
 // ----------------------------------------------------------------------------------------- SESSION STORAGE
 
@@ -43,6 +49,10 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 app.use(express.json())
+
+app.use(compression({
+    brotli: { enable: true, zlib: {} }
+}))
 
 app.use('/static', express.static(__dirname + '/public'))
 
@@ -71,6 +81,7 @@ try {
 } catch (error) {
 
     console.log('\n--- Cannot connect to database ' + error + '---')
+
     process.exit()
 
 }
@@ -90,13 +101,23 @@ app.use(passport.session())
 // ----------------------------------------------------------------------------------------- ROUTERS
 
 app.use('/', ViewRoutes)
-app.use('/api/auth', AuthRoutes)
-app.use('/api/products', ProductRoutes)
-app.use('/api/carts', CartRoutes)
-app.use('/api/users', UserRoutes)
 app.use('/chat', ChatRoutes)
+app.use('/api/auth', AuthRoutes)
+app.use('/api/users', UserRoutes)
+app.use('/api/carts', CartRoutes)
+app.use('/api/products', ProductRoutes)
+app.use(errorHandler)
 
 // ----------------------------------------------------------------------------------------- 
+
+
+app.get('/mockingproducts', async (req, res) => {
+
+    const result = await generateMockProducts(100)
+
+    res.json({ message: 'success', payload: result })
+
+})
 
 app.get('/realtimeproducts', async (req, res) => {
 

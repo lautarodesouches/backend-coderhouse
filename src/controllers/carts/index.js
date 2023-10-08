@@ -1,3 +1,5 @@
+import CustomError from '../../class/error/index.js'
+import EErrors from '../../class/error/types.js'
 import { cartService } from '../../services/index.js'
 
 export const createCart = async (req, res) => {
@@ -59,6 +61,17 @@ export const addProductCart = async (req, res) => {
     const pid = req.params.pid
 
     const quantity = req.query.quantity || 1
+
+    if (quantity === 0) {
+
+        CustomError.createError({
+            name: 'Invalid quantity',
+            cause: 'Quantity can not be cero',
+            message: 'Can not add product to cart',
+            code: EErrors.INVALID_TYPE_ERROR
+        })
+
+    }
 
     try {
 

@@ -1,3 +1,5 @@
+import CustomError from '../../class/error/index.js'
+import EErrors from '../../class/error/types.js'
 import { productService } from '../../services/index.js'
 
 export const getProducts = async (req, res) => {
@@ -22,6 +24,17 @@ export const addProducts = async (req, res) => {
 
     const data = req.body
 
+    if (!data) {
+
+        CustomError.createError({
+            name: 'Can not add product',
+            cause: 'Invalid form',
+            message: 'Invalid product',
+            code: EErrors.INVALID_TYPE_ERROR
+        })
+
+    }
+
     try {
 
         const result = await productService.addProducts(data)
@@ -44,11 +57,13 @@ export const getProductById = async (req, res) => {
 
         const result = await productService.getProductById(id)
 
+        if (!result) throw new Error('Producto no encontrado')
+
         res.json({ message: 'Producto encontrado', payload: result })
 
     } catch (error) {
 
-        res.status(500).json({ message: 'Error al obtener el producto' })
+        res.status(500).json({ message: error.message || 'Error al obtener el producto' })
 
     }
 
