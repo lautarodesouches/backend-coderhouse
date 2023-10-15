@@ -30,6 +30,14 @@ router.get('/register', (req, res) => {
     res.render('register', {})
 })
 
+router.get('/reset', (req, res) => {
+    res.render('reset', {})
+})
+
+router.get('/reset/new', (req, res) => {
+    res.render('resetnew', {})
+})
+
 router.get(
     '/profile',
     passport.authenticate('jwt'),

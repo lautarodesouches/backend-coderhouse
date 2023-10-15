@@ -6,8 +6,13 @@ import passport from 'passport'
 // -----------------------------------------------------------------------------------------
 
 import config from '../index.js'
+import Mail from '../../utils/mail.js'
+
+// -----------------------------------------------------------------------------------------
+
 import { UserModel } from '../../dao/mongo/models/index.js'
 import { createHash, isPasswordValid, generateToken, extractCookie } from '../../utils/index.js'
+import { cartService } from '../../services/index.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -33,13 +38,16 @@ const initializePassport = () => {
 
                 if (user) throw new Error('Usuario ya existe')
 
+                const cart = await cartService.createCart()
+
                 const newUser = {
                     first_name,
                     last_name,
                     email,
                     age,
                     password: createHash(password),
-                    role: 'user'
+                    role: 'user',
+                    cartId: cart._id
                 }
 
                 const result = await UserModel.create(newUser)
@@ -68,6 +76,39 @@ const initializePassport = () => {
                 if (!user) throw new Error('Usuario no encontrado')
 
                 if (!isPasswordValid(user, password)) throw new Error('Contraseña incorrecta')
+
+                return done(null, user)
+
+            } catch (error) {
+
+                return done(error, false)
+
+            }
+
+        }
+    ))
+
+    passport.use('reset', new LocalStrategy(
+        {
+            passReqToCallback: true,
+            usernameField: 'email'
+        },
+        async (req, email, password, done) => {
+
+            try {
+
+                const user = await UserModel.findOne({ email }).lean().exec()
+
+                if (!user) throw new Error('Usuario no encontrado')
+
+                const mailer = new Mail
+
+                const time = new Date()
+                time.setHours(time.getHours() + 1)
+
+                const html = `<a href="http://localhost:8080/reset/new/?email=${email}&time=${time.getTime()}">Haga click acá para restablecer contraseña</a>`
+
+                await mailer.send(email, 'Restablecer contraseña', html)
 
                 return done(null, user)
 

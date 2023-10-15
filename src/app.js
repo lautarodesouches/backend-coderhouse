@@ -7,6 +7,7 @@ import FileStore from 'session-file-store'
 import MongoStore from 'connect-mongo'
 import passport from 'passport'
 import bodyParser from 'body-parser'
+import compression from 'express-compression'
 
 // -----------------------------------------------------------------------------------------
 
@@ -18,14 +19,13 @@ import { fileURLToPath } from 'url'
 
 import config from './config/index.js'
 import initializePassport from './config/passport/index.js'
+import errorHandler from './middleware/index.js'
 
 // -----------------------------------------------------------------------------------------
 
 import { ProductManager } from './dao/file/index.js'
 import { MessageModel, CartModel, ProductModel } from './dao/mongo/models/index.js'
 import { AuthRoutes, CartRoutes, ChatRoutes, ProductRoutes, UserRoutes, ViewRoutes, LoggerRoutes } from './routes/index.js'
-import compression from 'express-compression'
-import errorHandler from './middleware/index.js'
 import { generateMockProducts } from './utils/index.js'
 import { addLogger } from './utils/logger.js'
 

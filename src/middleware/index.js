@@ -2,7 +2,7 @@ import EErrors from '../class/error/types.js'
 
 export default (err, req, res, next) => {
 
-    console.log(err.cause)
+    console.log(err)
 
     if (err) {
         switch (err.code) {

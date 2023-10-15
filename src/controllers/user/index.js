@@ -122,3 +122,23 @@ export const deletedUser = async (req, res) => {
     }
 
 }
+
+export const changeUser = async (req, res) => {
+
+    const userId = req.params.uid
+
+    try {
+
+        const result = await userService.changeUser(userId)
+
+        const type = 'user'
+
+        res.json({ message: `Tipo de usuario ${type}`, payload: result })
+
+    } catch (error) {
+
+        res.status(500).json({ message: 'Error al cambiar el tipo de usuario' })
+
+    }
+
+} 

@@ -6,7 +6,7 @@ export const createCart = async (req, res) => {
 
     try {
 
-        const cart = cartService.createCart()
+        const cart = await cartService.createCart()
 
         res.json({ message: 'Carrito creado', payload: cart })
 

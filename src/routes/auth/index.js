@@ -4,6 +4,7 @@ import passport from 'passport'
 // -----------------------------------------------------------------------------------------
 
 import config from '../../config/index.js'
+import Mail from '../../utils/mail.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -53,6 +54,38 @@ router.post(
     '/register',
     passport.authenticate('register', { failureRedirect: '/register' }),
     async (req, res) => res.redirect('/')
+)
+
+router.post(
+    '/reset',
+    async (req, res) => {
+
+        const { email } = req.body
+
+        const mailer = new Mail
+
+        const time = new Date()
+        time.setHours(time.getHours() + 1)
+
+        const html = `<a href="http://localhost:8080/reset/new/?email=${email}&time=${time.getTime()}">Haga click acá para restablecer contraseña</a>`
+
+        await mailer.send(email, 'Restablecer contraseña', html)
+
+        res.redirect('/')
+    }
+)
+
+router.post(
+    '/reset/new',
+    async (req, res) => {
+
+        const { email, password, time } = req.body
+
+        if (!time < new Date().getTime()) return
+            
+
+        res.redirect('/')
+    }
 )
 
 // -----------------------------------------------------------------------------------------

@@ -10,6 +10,8 @@ const config = {
     jwtSecret: process.env.JWT_SECRET,
     jwtCookieName: process.env.JWT_COOKIE_NAME,
     githubClientSecret: process.env.GITHUB_CLIENT_SECRET,
+    mailUser: process.env.MAIL_USER,
+    mailPassword: process.env.MAIL_PASSWORD,
 }
 
 export default config
