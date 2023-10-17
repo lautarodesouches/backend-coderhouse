@@ -1,132 +1,58 @@
-import { CartModel, ProductModel } from '../models/index.js'
+import { CartModel, UserModel } from '../models/index.js'
 
-export default class Cart {
+export default class User {
 
-    createCart = async () => {
+    async createUser(newUser) {
 
-        const cart = await CartModel.create({ products: [] })
+        const cart = await CartModel.create({ product, quantity })
 
-        return await cart.save()
+        newUser.cartId = cart._id
 
-    }
+        const userCreated = await UserModel.create(newUser)
 
-    getCarts = async (limit) => {
-
-        if (!limit) return await CartModel.find().lean().exec()
-
-        const carts = await CartModel.find().lean().exec()
-
-        return carts.slice(0, limit)
+        return userCreated
 
     }
 
-    getCartById = async (id) => await CartModel.findOne({ _id: id })
+    async getUsers() {
 
-    deleteCartById = async (id) => await CartModel.findByIdAndDelete(id)
-
-    addProductCart = async (cid, pid, quantity) => {
-
-        const cart = await CartModel.findById(cid)
-
-        const product = await ProductModel.findById(pid)
-
-        if (!product) throw new Error('No existe el producto')
-
-        if (!cart) {
-
-            const newCart = new CartModel({ products: [{ pid, quantity }] })
-
-            await newCart.save()
-
-            return newCart
-
-        }
-
-        const existingProductIndex = cart.products.findIndex(
-            (item) => item.pid._id.toString() === pid
-        )
-
-        if (existingProductIndex !== -1) {
-            cart.products[existingProductIndex].quantity += quantity
-        } else {
-            cart.products.push({ pid, quantity })
-        }
-
-        await cart.save()
-
-        return cart
+        return await UserModel.find()
 
     }
 
-    deleteProductCart = async (cid, pid) => {
+    async getUserByEmail(email) {
 
-        const cart = await CartModel.findById(cid)
-
-        if (!cart) throw new Error('Carrito no encontrado')
-
-        const existingProductIndex = cart.products.findIndex((item) => item.pid._id.toString() === pid)
-
-        if (existingProductIndex === -1) throw new Error('El producto no está en el carrito')
-
-        const productToRemove = cart.products[existingProductIndex]
-
-        if (productToRemove.quantity > 1) {
-            productToRemove.quantity -= 1
-        } else {
-            cart.products.splice(existingProductIndex, 1)
-        }
-
-        await cart.save()
-
-        return cart
+        return await UserModel.findOne({ email })
 
     }
 
-    finishPurchase = async (cid) => {
+    async getUserById(id) {
 
-        const cart = await CartModel.findById(cid)
-
-        if (!cart) throw new Error('Carrito no encontrado')
-
-        const cartProducts = cart.products
-        const productsToRemove = []
-
-        for (const cartProduct of cartProducts) {
-
-            const productInCart = await ProductModel.findById(cartProduct.pid)
-
-            if (!productInCart) throw new Error(`Producto no encontrado`)
-
-            if (productInCart.stock >= cartProduct.quantity) {
-                productInCart.stock -= cartProduct.quantity;
-                await productInCart.save();
-            } else {
-                productsToRemove.push(cartProduct.pid);
-            }
-
-        }
-
-        const productosComprados = cart.products.filter(
-            (cartProduct) => !productsToRemove.includes(cartProduct.pid)
-        )
-
-        const total = productosComprados.reduce((accumulator, product) => {
-            const subtotal = product.pid.price * product.quantity
-            return accumulator + subtotal
-        }, 0)
-
-        cart.products = cart.products.filter((cartProduct) =>
-            productsToRemove.includes(cartProduct.pid)
-        )
-
-        await cart.save()
-
-        return {
-            sinStock: productsToRemove,
-            buyProducts: productosComprados,
-            amountTotalBuy: total,
-        }
+        return await UserModel.findById(id)
 
     }
+
+    async updatedUserById(id, userToUpdate) {
+
+        return await UserModel.findByIdAndUpdate(id, userToUpdate)
+
+    }
+
+    async deletedUserById(id) {
+
+        await UserModel.findByIdAndDelete(id)
+
+    }
+
+    async changeUser(userToChange) {
+
+        const user = await UserModel.findById(userToChange._id)
+
+        user.role = user.role === 'user' ? 'premium' : 'user'
+
+        await UserModel.findByIdAndUpdate(user._id, user)
+
+    }
+
 
 }
