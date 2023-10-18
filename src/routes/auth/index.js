@@ -1,10 +1,14 @@
 import { Router } from 'express'
 import passport from 'passport'
+import jwt from 'jsonwebtoken'
 
 // -----------------------------------------------------------------------------------------
 
 import config from '../../config/index.js'
 import Mail from '../../utils/mail.js'
+import UserService from '../../services/user/index.js'
+import { userService } from '../../services/index.js'
+import { createHash } from '../../utils/index.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -60,14 +64,15 @@ router.post(
     '/reset',
     async (req, res) => {
 
+        console.log('TEST')
+
         const { email } = req.body
 
         const mailer = new Mail
 
-        const time = new Date()
-        time.setHours(time.getHours() + 1)
+        const token = jwt.sign({ email }, config.jwtSecret, { expiresIn: '1h' })
 
-        const html = `<a href="http://localhost:8080/reset/new/?email=${email}&time=${time.getTime()}">Haga click acá para restablecer contraseña</a>`
+        const html = `<a href="http://localhost:8080/reset/${token}">Haga click acá para restablecer contraseña</a>`
 
         await mailer.send(email, 'Restablecer contraseña', html)
 
@@ -76,15 +81,31 @@ router.post(
 )
 
 router.post(
-    '/reset/new',
+    '/reset/:token',
     async (req, res) => {
 
-        const { email, password, time } = req.body
+        const token = req.params.token
 
-        if (!time < new Date().getTime()) return
-            
+        const { password } = req.body
+
+        try {
+
+            const data = jwt.verify(token, config.jwtSecret)
+
+            const user = await userService.getUserByEmail(data.email)
+
+            if (jwt.verify(user.password, config.jwtSecret) === password) throw new Error('Contraseñas no deben ser iguales')
+
+            user.password = createHash(password)
+
+            await userService.updatedUserById(user._id, user)
+
+        } catch (error) {
+            res.redirect('/reset')
+        }
 
         res.redirect('/')
+
     }
 )
 

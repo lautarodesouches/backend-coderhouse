@@ -37,8 +37,6 @@ export const generateMockProducts = async qty => {
 
     }
 
-    console.log(products);
-
     return products
 
 }

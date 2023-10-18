@@ -1,23 +1,14 @@
 <h1>Reset password</h1>
-<form class='d-flex flex-column w-25 m-auto bg-secondary gap-4 border rounded p-4' action='/api/auth/reset/new' method='post' id='form'>
-    <input class='form-control' type='text' name='email' placeholder='email' id='email' readonly>
-    <input class='form-control d-none' type='text' name='time' placeholder='time' id='time' readonly>
+<form class='d-flex flex-column w-25 m-auto bg-secondary gap-4 border rounded p-4' action='/api/auth/reset/' method='post' id='form'>
     <input class='form-control' type='password' name='password' placeholder='password' required>
     <button class='btn btn-primary'>Reestablecer</button>
 </form>
 <script>
-    const urlParams = new URLSearchParams(window.location.search)
-    const email = urlParams.get('email')
+    const currentPath = window.location.pathname
 
-    const emailInput = document.getElementById('email')
-    emailInput.value = email
-    
-    emailInput.setAttribute('readonly', 'true')
+    const token = currentPath.split('/')[2]
 
-    const time = urlParams.get('time')
+    const form = document.getElementById('form')
 
-    const timeInput = document.getElementById('time')
-    timeInput.value = time
-    
-    timeInput.setAttribute('readonly', 'true')
+    form.action = `/api/auth/reset/${token}`
 </script>

@@ -88,39 +88,6 @@ const initializePassport = () => {
         }
     ))
 
-    passport.use('reset', new LocalStrategy(
-        {
-            passReqToCallback: true,
-            usernameField: 'email'
-        },
-        async (req, email, password, done) => {
-
-            try {
-
-                const user = await UserModel.findOne({ email }).lean().exec()
-
-                if (!user) throw new Error('Usuario no encontrado')
-
-                const mailer = new Mail
-
-                const time = new Date()
-                time.setHours(time.getHours() + 1)
-
-                const html = `<a href="http://localhost:8080/reset/new/?email=${email}&time=${time.getTime()}">Haga click acá para restablecer contraseña</a>`
-
-                await mailer.send(email, 'Restablecer contraseña', html)
-
-                return done(null, user)
-
-            } catch (error) {
-
-                return done(error, false)
-
-            }
-
-        }
-    ))
-
     passport.use('github', new GitHubStrategy(
         {
             clientID: 'Iv1.e49f438f66dc04f8',

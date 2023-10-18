@@ -44,4 +44,4 @@ switch (config.persistence) {
         break
 }
 
-console.log(`\n--- Persistence with ${config.persistence}---`)
+console.log(`\n--- Persistence with ${config.persistence} ---`)

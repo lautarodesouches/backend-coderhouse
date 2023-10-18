@@ -34,7 +34,7 @@ router.get('/reset', (req, res) => {
     res.render('reset', {})
 })
 
-router.get('/reset/new', (req, res) => {
+router.get('/reset/:token', (req, res) => {
     res.render('resetnew', {})
 })
 

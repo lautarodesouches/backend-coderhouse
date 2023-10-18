@@ -44,13 +44,13 @@ export default class User {
 
     }
 
-    async changeUser(userToChange) {
+    async changeUserRole(userToChange) {
 
         const user = await UserModel.findById(userToChange._id)
 
         user.role = user.role === 'user' ? 'premium' : 'user'
 
-        await UserModel.findByIdAndUpdate(user._id, user)
+        return await UserModel.findByIdAndUpdate(user._id, user)
 
     }
 
