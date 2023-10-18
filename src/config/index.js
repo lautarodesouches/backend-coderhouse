@@ -3,7 +3,8 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 const config = {
-    persistence: process.env.PERSISTENCE,
+    environment: process.env.ENVIRONMENT || 'DEVELOP',
+    persistence: process.env.PERSISTENCE || 'MONGO',
     port: parseInt(process.env.PORT) || 8080,
     mongoUrl: process.env.MONGO_URL,
     mongoDb: process.env.MONGO_DB,

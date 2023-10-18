@@ -2,61 +2,45 @@ import { Router } from 'express'
 
 // -----------------------------------------------------------------------------------------
 
-const router = Router();
+const router = Router()
 
 // -----------------------------------------------------------------------------------------
 
-router.get("/", (req,res) => {
+router.get("/debug", (req, res) => {
 
-    req.logger.error('Se cayo el servidor')
-
-    res.send('Logger')
-
-})
-
-router.get("/debug", (req,res) => {
-
-    req.logger.debug('Se cayo el servidor')
+    req.logger.debug('Error level: debug')
 
     res.send('Logger')
 
 })
 
-router.get("/http", (req,res) => {
+router.get("/info", (req, res) => {
 
-    req.logger.http('Se cayo el servidor')
-
-    res.send('Logger')
-
-})
-
-router.get("/info", (req,res) => {
-
-    req.logger.info('Se cayo el servidor')
+    req.logger.info('Error level: info')
 
     res.send('Logger')
 
 })
 
-router.get("/warning", (req,res) => {
+router.get("/warn", (req, res) => {
 
-    req.logger.warning('Se cayo el servidor')
-
-    res.send('Logger')
-
-})
-
-router.get("/error", (req,res) => {
-
-    req.logger.error('Se cayo el servidor')
+    req.logger.warn('Error level: warn')
 
     res.send('Logger')
 
 })
 
-router.get("/fatal", (req,res) => {
+router.get("/error", (req, res) => {
 
-    req.logger.fatal('Se cayo el servidor')
+    req.logger.error('Error level: error')
+
+    res.send('Logger')
+
+})
+
+router.get("/fatal", (req, res) => {
+
+    req.logger.fatal('Error level: fatal')
 
     res.send('Logger')
 
