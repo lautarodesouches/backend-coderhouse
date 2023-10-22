@@ -37,6 +37,22 @@ export const getUsers = async (req, res) => {
 
 }
 
+export const getCurrentUser = async (req, res) => {
+
+    try {
+        
+        const user = await userService.getUserCurrent(req.user)
+        
+        res.status(200).json(user)
+
+      } catch (error) {
+        
+        res.status(500).json({ message: 'Error al obtener los usuarios' })
+
+      }
+
+}
+
 export const getUserByEmail = async (req, res) => {
 
     try {

@@ -1,5 +1,5 @@
 export default class UserService {
-    
+
     constructor(dao) {
         this.dao = dao
     }
@@ -11,6 +11,8 @@ export default class UserService {
     getUserByEmail = async (email) => await this.dao.getUserByEmail(email)
 
     getUserById = async (id) => await this.dao.getUserById(id)
+
+    getUserCurrent = async (user) => await this.dao.getUserCurrent(user)
 
     updatedUserById = async (id, updatedUser) => await this.dao.updatedUserById(id, updatedUser)
 

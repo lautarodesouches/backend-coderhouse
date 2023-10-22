@@ -8,6 +8,8 @@ import MongoStore from 'connect-mongo'
 import passport from 'passport'
 import bodyParser from 'body-parser'
 import compression from 'express-compression'
+import swaggerJSDoc from 'swagger-jsdoc'
+import SwaggerUiExpress from 'swagger-ui-express'
 
 // -----------------------------------------------------------------------------------------
 
@@ -19,7 +21,7 @@ import { fileURLToPath } from 'url'
 
 import config from './config/index.js'
 import initializePassport from './config/passport/index.js'
-import errorHandler from './middleware/index.js'
+import errorHandler from './middleware/errors.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -33,7 +35,6 @@ import { addLogger } from './utils/logger.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-
 
 // ----------------------------------------------------------------------------------------- SESSION STORAGE
 
@@ -98,6 +99,25 @@ app.set('view engine', 'handlebars')
 initializePassport()
 app.use(passport.initialize())
 app.use(passport.session())
+
+// ----------------------------------------------------------------------------------------- SWAGGER
+
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'Documentación proyecto Backend',
+            description: 'Este es un proyecto para el curso de Backend en CoderHouse'
+        }
+    },
+    apis: [
+        `${__dirname}/docs/*.yaml`
+    ]
+}
+
+const specs = swaggerJSDoc(swaggerOptions)
+
+app.use('/api/docs', SwaggerUiExpress.serve, SwaggerUiExpress.setup(specs))
 
 // ----------------------------------------------------------------------------------------- ROUTERS
 

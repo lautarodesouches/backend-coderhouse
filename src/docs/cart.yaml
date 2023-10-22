@@ -1,0 +1,135 @@
+info:
+    title: API de Carritos de compras
+    
+paths:
+    /api/carts:
+        post:
+            summary: Crea un nuevo carrito
+            responses:
+                201:
+                    description: Carrito creado exitosamente
+                500:
+                    description: Error al crear el carrito
+
+        get:
+            summary: Obtiene una lista de carritos
+            responses:
+                200:
+                    description: Carritos obtenidos exitosamente
+                404:
+                    description: No se encontraron carritos
+
+    /api/carts/{cid}:
+        get:
+            summary: Obtiene un carrito por ID
+            parameters:
+                - name: cid
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                  description: ID del carrito
+            responses:
+                200:
+                    description: Carrito obtenido exitosamente
+                404:
+                    description: Carrito no encontrado
+
+        delete:
+            summary: Elimina un carrito por ID
+            parameters:
+                - name: cid
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                  description: ID del carrito
+            responses:
+                200:
+                    description: Carrito eliminado exitosamente
+                500:
+                    description: Error al eliminar el carrito
+
+    /api/carts/{cid}/{pid}:
+        post:
+            summary: Agrega un producto a un carrito
+            parameters:
+                - name: cid
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                  description: ID del carrito
+                - name: pid
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                  description: ID del producto
+            responses:
+                200:
+                    description: Producto agregado al carrito
+                404:
+                    description: Carrito no encontrado
+
+        delete:
+            summary: Elimina un producto de un carrito
+            parameters:
+                - name: cid
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                  description: ID del carrito
+                - name: pid
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                  description: ID del producto
+            responses:
+                200:
+                    description: Producto eliminado del carrito
+                404:
+                    description: Carrito no encontrado
+
+    /api/carts/purchase/{cid}:
+        post:
+            summary: Finaliza la compra de un carrito
+            parameters:
+                - name: cid
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                  description: ID del carrito
+            responses:
+                200:
+                    description: Compra realizada con éxito
+                404:
+                    description: Error al finalizar la compra
+
+components:
+    schemas:
+        Cart:
+            type: object
+            properties:
+                products:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            product:
+                                type: ObjectId
+                                description: Referencia al producto
+                                required: true
+                            quantity:
+                                type: number
+                                description: Cantidad del producto en el carrito
+                                required: true
+            example:
+                products:
+                    - product: '64c7b6c0166f5c93022d7170'
+                      quantity: 2
+                    - product: '64c7b698166f5c93022d716f'
+                      quantity: 1

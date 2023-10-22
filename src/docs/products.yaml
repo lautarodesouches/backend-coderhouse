@@ -1,0 +1,151 @@
+info:
+    title: API de Productos
+    
+paths:
+    /api/products:
+        get:
+            summary: Obtiene todos los productos
+            tags:
+                - Products
+            responses:
+                '200':
+                    description: Productos encontrados
+                '500':
+                    description: Error al obtener los productos
+        post:
+            summary: Agrega un nuevo producto
+            tags:
+                - Products
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/requestBodies/addProduct'
+            responses:
+                '201':
+                    description: Producto agregado exitosamente
+                '500':
+                    description: Error al agregar el producto
+    /api/products/{pid}:
+        get:
+            summary: Busca un producto por su ID
+            parameters:
+                - name: pid
+                  in: path
+                  required: true
+                  description: Id del producto
+                  schema:
+                      $type: String
+            tags:
+                - Products
+            responses:
+                '200':
+                    description: Producto encontrado
+                '500':
+                    description: Error al obtener el producto
+        put:
+            summary: Busca un producto por su ID y lo modifica
+            parameters:
+                - name: pid
+                  in: path
+                  required: true
+                  description: Id del producto
+                  schema:
+                      $type: String
+            tags:
+                - Products
+            responses:
+                '200':
+                    description: Producto actualizado exitosamente
+                '500':
+                    description: Error al actualizar el producto
+        delete:
+            summary: Elimina un producto por su ID
+            parameters:
+                - name: pid
+                  in: path
+                  required: true
+                  description: Id del producto
+                  schema:
+                      $type: String
+            tags:
+                - Products
+            responses:
+                '200':
+                    description: Producto eliminado exitosamente
+                '500':
+                    description: Error al eliminar el producto
+components:
+    schemas:
+        Product:
+            type: object
+            properties:
+                title:
+                    type: string
+                    description: Titulo del producto
+                code:
+                    type: string
+                    description: Codigo identificador
+                description:
+                    type: string
+                    description: Descripcion del producto
+                price:
+                    type: number
+                    description: Precio del producto
+                thumnail:
+                    type: array
+                    description: Imagenes del producto
+                stock:
+                    type: number
+                    description: Cantidad disponible
+                status:
+                    type: boolean
+                    description: Si esta habilitado
+                category:
+                    type: string
+                    description: Categoria del producto
+                owner:
+                    type: ObjectId
+                    description: Id del dueño del producto
+            example:
+                title: 'Xiaomi Redmi Note 11'
+                description: 'Celular'
+                price: 108999
+                thumnail: []
+                code: '001'
+                stock: 32
+                status: true
+                category: 'Celulares'
+                owner: '64c7b698166f5c93022d716f'
+        requestBodies:
+            addProduct:
+                type: object
+                properties:
+                    title:
+                        type: string
+                        description: Titulo del producto
+                    code:
+                        type: string
+                        description: Codigo identificador
+                    description:
+                        type: string
+                        description: Descripcion del producto
+                    price:
+                        type: number
+                        description: Precio del producto
+                    thumnail:
+                        type: array
+                        description: Imagenes del producto
+                    stock:
+                        type: number
+                        description: Cantidad disponible
+                    status:
+                        type: boolean
+                        description: Si esta habilitado
+                    category:
+                        type: string
+                        description: Categoria del producto
+                    owner:
+                        type: ObjectId
+                        description: Id del dueño del producto

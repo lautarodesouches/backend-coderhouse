@@ -1,3 +1,4 @@
+import UserDTO from '../../../dto/user.js'
 import { CartModel, UserModel } from '../models/index.js'
 
 export default class User {
@@ -51,6 +52,12 @@ export default class User {
         user.role = user.role === 'user' ? 'premium' : 'user'
 
         return await UserModel.findByIdAndUpdate(user._id, user)
+
+    }
+
+    async getUserCurrent(user) {
+
+        return new UserDTO(user.user)
 
     }
 
