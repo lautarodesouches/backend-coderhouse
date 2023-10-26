@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import passport from 'passport'
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 // -----------------------------------------------------------------------------------------
 
@@ -85,26 +86,29 @@ router.post(
     async (req, res) => {
 
         const token = req.params.token
-
+        
         const { password } = req.body
-
+        
         try {
-
+            
             const data = jwt.verify(token, config.jwtSecret)
-
+            
             const user = await userService.getUserByEmail(data.email)
+            
+            const passwordsMatch = await bcrypt.compare(password, user.password)
 
-            if (jwt.verify(user.password, config.jwtSecret) === password) throw new Error('Contraseñas no deben ser iguales')
+            if (passwordsMatch) throw new Error('Contraseñas no deben ser iguales')
 
             user.password = createHash(password)
 
             await userService.updatedUserById(user._id, user)
 
+            res.redirect('/')
+            
         } catch (error) {
             res.redirect('/reset')
         }
 
-        res.redirect('/')
 
     }
 )
