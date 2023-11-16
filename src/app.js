@@ -27,7 +27,7 @@ import errorHandler from './middleware/errors.js'
 
 import { ProductManager } from './dao/file/index.js'
 import { MessageModel, CartModel, ProductModel } from './dao/mongo/models/index.js'
-import { AuthRoutes, CartRoutes, ChatRoutes, ProductRoutes, UserRoutes, ViewRoutes, LoggerRoutes } from './routes/index.js'
+import { SessionRoutes, CartRoutes, ChatRoutes, ProductRoutes, UserRoutes, ViewRoutes, LoggerRoutes } from './routes/index.js'
 import { generateMockProducts } from './utils/index.js'
 import { addLogger } from './utils/logger.js'
 
@@ -124,7 +124,7 @@ app.use('/api/docs', SwaggerUiExpress.serve, SwaggerUiExpress.setup(specs))
 app.use('/', ViewRoutes)
 app.use('/loggertest', LoggerRoutes)
 app.use('/chat', ChatRoutes)
-app.use('/api/auth', AuthRoutes)
+app.use('/api/auth', SessionRoutes)
 app.use('/api/users', UserRoutes)
 app.use('/api/carts', CartRoutes)
 app.use('/api/products', ProductRoutes)

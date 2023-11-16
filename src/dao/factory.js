@@ -28,6 +28,7 @@ switch (config.persistence) {
         break
 
     case 'FILE':
+        
         const { default: ProductFile } = await import('./file/product/index.js')
         const { default: CartFile } = await import('./file/cart/index.js')
         const { default: UserFile } = await import('./file/user/index.js')

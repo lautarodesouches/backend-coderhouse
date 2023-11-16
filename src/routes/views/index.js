@@ -81,6 +81,10 @@ router.get('/products', auth, async (req, res) => {
 
 })
 
+router.get('/documents', (req, res) => {
+    res.render('documents', { userId: req.user.id })
+})
+
 // -----------------------------------------------------------------------------------------
 
 export default router

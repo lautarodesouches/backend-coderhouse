@@ -6,13 +6,12 @@ import passport from 'passport'
 // -----------------------------------------------------------------------------------------
 
 import config from '../index.js'
-import Mail from '../../utils/mail.js'
 
 // -----------------------------------------------------------------------------------------
 
 import { UserModel } from '../../dao/mongo/models/index.js'
 import { createHash, isPasswordValid, generateToken, extractCookie } from '../../utils/index.js'
-import { cartService } from '../../services/index.js'
+import { cartService, userService } from '../../services/index.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -34,7 +33,7 @@ const initializePassport = () => {
 
             try {
 
-                const user = await UserModel.findOne({ email: username })
+                const user = await userService.getUserByEmail(username)
 
                 if (user) throw new Error('Usuario ya existe')
 
@@ -50,7 +49,7 @@ const initializePassport = () => {
                     cartId: cart._id
                 }
 
-                const result = await UserModel.create(newUser)
+                const result = await userService.createUser(newUser)
 
                 return done(null, result)
 
@@ -71,7 +70,7 @@ const initializePassport = () => {
 
             try {
 
-                const user = await UserModel.findOne({ email: username }).lean().exec()
+                const user = await userService.getUserByEmail(username)
 
                 if (!user) throw new Error('Usuario no encontrado')
 
@@ -98,7 +97,7 @@ const initializePassport = () => {
 
             try {
 
-                let user = await UserModel.findOne({ email: profile._json.email })
+                let user = await userService.getUserByEmail(profile._json.email)
 
                 if (!user) {
 
@@ -111,7 +110,7 @@ const initializePassport = () => {
                         age: 0
                     }
 
-                    user = await UserModel.create(newUser)
+                    user = await userService.createUser(newUser)
 
                 }
 

@@ -14,7 +14,7 @@ export default class UserService {
 
     getUserCurrent = async (user) => await this.dao.getUserCurrent(user)
 
-    updatedUserById = async (id, updatedUser) => await this.dao.updatedUserById(id, updatedUser)
+    updateUserById = async (id, updatedUser) => await this.dao.updateUserById(id, updatedUser)
 
     deletedUserById = async (id) => await this.dao.deletedUserById(id)
 

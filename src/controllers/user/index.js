@@ -40,16 +40,16 @@ export const getUsers = async (req, res) => {
 export const getCurrentUser = async (req, res) => {
 
     try {
-        
+
         const user = await userService.getUserCurrent(req.user)
-        
+
         res.status(200).json(user)
 
-      } catch (error) {
-        
+    } catch (error) {
+
         res.status(500).json({ message: 'Error al obtener los usuarios' })
 
-      }
+    }
 
 }
 
@@ -89,7 +89,7 @@ export const getUserById = async (req, res) => {
 
 }
 
-export const updatedUserById = async (req, res) => {
+export const updateUserById = async (req, res) => {
 
     const userId = req.params.id
 
@@ -107,7 +107,7 @@ export const updatedUserById = async (req, res) => {
 
     try {
 
-        const result = await userService.updatedUserById(userId, updatedUser)
+        const result = await userService.updateUserById(userId, updatedUser)
 
         res.json({ message: 'Usuario actualizado exitosamente', payload: result })
 
@@ -155,4 +155,28 @@ export const changeUserRole = async (req, res) => {
 
     }
 
-} 
+}
+
+export const addDocuments = async (req, res) => {
+
+    const document = req.file
+
+    console.log({ document })
+
+    if (!document) return res.status(500).json({ message: 'No se encontraron documentos para subir' })
+
+    const user = await userService.getUserById(req.params.uid)
+
+    if (!user.documents) user.documents = []
+
+    user.documents.push({
+        name: document.fieldname,
+        reference: document.path
+    })
+
+    await userService.updateUserById(user._id, user)
+
+    return res.json({ message: `Documentos agregados exitosamente` })
+
+
+}

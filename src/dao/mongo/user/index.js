@@ -33,7 +33,7 @@ export default class User {
 
     }
 
-    async updatedUserById(id, userToUpdate) {
+    async updateUserById(id, userToUpdate) {
 
         return await UserModel.findByIdAndUpdate(id, userToUpdate)
 
@@ -49,7 +49,22 @@ export default class User {
 
         const user = await UserModel.findById(userToChange._id)
 
-        user.role = user.role === 'user' ? 'premium' : 'user'
+        if (user.role === 'premium') user.role = 'user'
+        else {
+
+            const requieredDocsName = [
+                'identificacion',
+                'comprobanteDomicilio',
+                'comprobanteEstadoCuenta'
+            ]
+
+            requieredDocsName.forEach(requiredDocName => {
+                if(!user.documents.some(doc => doc.name === requiredDocName)) throw new Error('No has terminado de subir la documentación requerida')
+            })
+
+            user.role = 'premium'
+
+        }
 
         return await UserModel.findByIdAndUpdate(user._id, user)
 

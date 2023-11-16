@@ -25,8 +25,10 @@ export default class UserManager extends Manager {
             email,
             age: age || '',
             password,
-            cart: [],
             roles: 'Usuario',
+            cart: [],
+            documents: [],
+            last_connection: new Date(),
         }
         
         await this.addItem(newUser)
@@ -47,7 +49,7 @@ export default class UserManager extends Manager {
 
     }
 
-    updatedUserById = async (newUser) => this.updateItem(newUser)
+    updateUserById = async (newUser) => this.updateItem(newUser)
 
     deletedUser = async (id) => await this.deleteItemById(id)
 
