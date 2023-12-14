@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout</title>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+  <form id='payment-form'>
+    <div>
+      <label for="card-element">Credit or debit card</label>
+      <div id="card-element"></div>
+      <div id="card-errors" role="alert"></div>
+    </div>
+    <button type="submit">Submit Payment</button>
+  </form>
+  <aside id='aside'>
+
+  </aside>
+  <script>
+
+    const createNotification = message => {
+            
+      const div = document.createElement('div')
+
+      div.classList.add('alert','alert-primary','position-fixed','top-0','end-0','m-4')
+      div.role = 'alert'
+      div.innerText = message
+
+      aside.appendChild(div)
+
+      setTimeout(() => aside.removeChild(div), 4000)
+
+    }
+    
+    const stripe = Stripe('pk_test_51OJdMiIDq4nGeeYTIvAZfe8LEdI2axwOp5KV1nJUTfPDwHXSd8pYQhpT0OgP7THT0lWLpeexWl02mvrBIE3CsdsX00fwYqV8Tl')
+
+    const elements = stripe.elements()
+
+    const card = elements.create('card');
+
+    card.mount('#card-element');
+
+    // Handle real-time validation errors from the card Element
+    card.addEventListener('change', function(event) {
+      const cardErrors = document.getElementById('card-errors');
+      if (event.error) {
+        cardErrors.textContent = event.error.message;
+      } else {
+        cardErrors.textContent = '';
+      }
+    });
+
+    const form = document.getElementById('payment-form');
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault()
+
+      // Disable the submit button to prevent multiple submissions
+      form.querySelector('button').disabled = true;
+
+      // Create a token from the card information
+      stripe.createToken(card).then(function(result) {
+        if (result.error) {
+          // Inform the user if there was an error
+          const cardErrors = document.getElementById('card-errors');
+          cardErrors.textContent = result.error.message;
+        } else {
+
+          const token = result.token
+
+          fetch('/api/payments/intent', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ token })
+          })
+          .then(res => {
+            
+            if(res.status === 200) window.location.href = '/success'
+            
+            return res.json()
+          })
+          .then(data => {
+            createNotification(data.message)
+          })
+          
+        }
+      });
+    });
+
+  </script>
+</body>
+</html>

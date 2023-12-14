@@ -1,12 +1,66 @@
 <section class='my-5'>
-    <h1 class='text-center'>Cart</h1>
+    <h1 class='text-center'>Carrito</h1>
 </section>
 <section class='mt-5 row justify-content-around align-items-stretch' id='products'>
-    {{#each products}}
+    {{#each doc}}
         <article class='col-12 col-md-3 m-4 py-5 border rounded text-center bg-light'>
-            <h2 class='h4'>{{product.title}}</h2>
-            <h3 class='h5'>{{product.description}}</h3>
-            <h3 class='h5'>Cantidad: {{quantity}}</h3>
+            <h2 class='h4'>Titulo: {{this.title}}</h2>
+            <h2 class='h4'>Precio: {{this.price}}</h2>
+            <h3 class='h5'>Cantidad: {{this.quantity}}</h3>
+            <button class='btn btn-danger' data-cid={{../cartId}} data-pid={{this.id}} name='deleteMe'>Restar 1</button>
         </article>
     {{/each}}
+    <a href="./products/"><button class='btn btn-primary mt-5'>Volver</button></a>
+    <a href="./checkout/"><button class='btn btn-primary mt-5'>Checkout</button></a>
 </section>
+<aside id='aside'></aside>
+<script>
+
+    const createNotification = message => {
+            
+        const div = document.createElement('div')
+
+        div.classList.add('alert','alert-primary','position-fixed','top-0','end-0','m-4')
+        div.role = 'alert'
+        div.innerText = message
+
+        aside.appendChild(div)
+
+        setTimeout(() => {
+            aside.removeChild(div)
+        }, 4000)
+    }
+
+    const deleteMe = document.getElementsByName('deleteMe')
+
+    deleteMe.forEach(node => {
+
+        node.onclick = () => {
+
+            const cid = node.dataset.cid
+            const pid = node.dataset.pid
+
+            console.log({cid, pid})
+
+            async function deleteProduct(){
+
+                const response = await fetch(`http://localhost:8080/api/carts/${cid}/${pid}`, {
+                    method: 'DELETE'
+                })
+
+                const data = await response.json()
+
+                createNotification(data.message)
+
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1000)
+
+            }
+
+            deleteProduct()
+
+        }        
+    })
+
+</script>

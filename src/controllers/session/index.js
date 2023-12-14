@@ -11,7 +11,6 @@ import { userService } from '../../services/index.js'
 // -----------------------------------------------------------------------------------------
 
 export const login = async (req, res) => {
-
     if (!req.user) return res.status(400).send('Invalid credentials')
 
     updateLastConnection(req.user)
@@ -19,17 +18,13 @@ export const login = async (req, res) => {
     req.session.email = req.user.email
 
     return res.redirect('/products')
-
 }
 
 export const loginGithub = async (req, res) => {
-
     updateLastConnection(req.user)
-
 }
 
 export const logout = (req, res) => {
-
     updateLastConnection(req.user)
 
     req.session.destroy(err => {
@@ -40,26 +35,21 @@ export const logout = (req, res) => {
 }
 
 export const githubCallback = async (req, res) => {
-
     updateLastConnection(req.user)
 
     res.cookie(config.jwtCookieName, req.user.token).redirect('/profile')
-
 }
 
 export const register = async (req, res) => {
-
     updateLastConnection(req.user)
 
     res.redirect('/')
-
 }
 
 export const reset = async (req, res) => {
-
     const { email } = req.body
 
-    const mailer = new Mail
+    const mailer = new Mail()
 
     const token = jwt.sign({ email }, config.jwtSecret, { expiresIn: '1h' })
 
@@ -71,13 +61,11 @@ export const reset = async (req, res) => {
 }
 
 export const resetToken = async (req, res) => {
-
     const token = req.params.token
 
     const { password } = req.body
 
     try {
-
         const data = jwt.verify(token, config.jwtSecret)
 
         const user = await userService.getUserByEmail(data.email)
@@ -91,18 +79,14 @@ export const resetToken = async (req, res) => {
         await userService.updateUserById(user._id, user)
 
         res.redirect('/')
-
     } catch (error) {
         res.redirect('/reset')
     }
-
-
 }
 
-export const updateLastConnection = async (user) => {
+export const updateLastConnection = async user => {
 
     user.last_connection = new Date()
 
     await userService.updateUserById(user._id, user)
-
 }

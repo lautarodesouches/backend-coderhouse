@@ -3,8 +3,9 @@ import passport from 'passport'
 
 // -----------------------------------------------------------------------------------------
 
-import { ProductModel, UserModel } from '../../dao/mongo/models/index.js'
+import { ProductModel } from '../../dao/mongo/models/index.js'
 import config from '../../config/index.js'
+import { cartService, userService } from '../../services/index.js'
 
 // -----------------------------------------------------------------------------------------
 
@@ -13,17 +14,15 @@ const router = Router()
 // -----------------------------------------------------------------------------------------
 
 function auth(req, res, next) {
-    return ((req.session?.email || req.cookies[config.jwtCookieName]) ? next() : res.status(401).send('Auth error'))
+    return req.session?.email || req.cookies[config.jwtCookieName] ? next() : res.status(401).send('Auth error')
 }
 
 // -----------------------------------------------------------------------------------------
 
 router.get('/', (req, res) => {
-
     if (req.session?.email) res.redirect('/profile')
 
     res.render('login', {})
-
 })
 
 router.get('/register', (req, res) => {
@@ -38,21 +37,14 @@ router.get('/reset/:token', (req, res) => {
     res.render('resetnew', {})
 })
 
-router.get(
-    '/profile',
-    passport.authenticate('jwt'),
-    async (req, res) => {
+router.get('/profile', passport.authenticate('jwt'), async (req, res) => {
+    const user = await userService.getUserByEmail(req.session.email)
 
-        const user = await UserModel.findOne({ email: req.user.email })
-
-        res.render('profile', user)
-
-    }
-)
+    res.render('profile', user)
+})
 
 router.get('/products', auth, async (req, res) => {
-
-    const user = await UserModel.findOne({ email: req.session.email })
+    const user = await userService.getUserByEmail(req.session.email)
 
     // -------------------------------------------------
 
@@ -78,7 +70,31 @@ router.get('/products', auth, async (req, res) => {
     }
 
     res.render('products', info)
+})
 
+router.get('/checkout', (req, res) => {
+    res.render('checkout', {})
+})
+
+router.get('/success', (req, res) => {
+    res.render('success', {})
+})
+
+router.get('/cart', async (req, res) => {
+    const user = await userService.getUserByEmail(req.session.email)
+
+    const cart = await cartService.getCartById(user.cartId)
+
+    const doc = cart.products.map(item => {
+        return {
+            id: item.product._id,
+            title: item.product.title,
+            price: item.product.price,
+            quantity: item.quantity
+        }
+    })
+
+    res.render('cart', { doc, cartId: cart._id})
 })
 
 router.get('/documents', (req, res) => {

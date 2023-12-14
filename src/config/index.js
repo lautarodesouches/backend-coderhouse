@@ -13,6 +13,7 @@ const config = {
     githubClientSecret: process.env.GITHUB_CLIENT_SECRET,
     mailUser: process.env.MAIL_USER,
     mailPassword: process.env.MAIL_PASSWORD,
+    stripeKey: process.env.STRIPE_KEY
 }
 
 export default config
